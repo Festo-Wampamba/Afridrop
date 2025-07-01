@@ -1,0 +1,34 @@
+# robots.txt for Afridrop Solutions
+# https://www.afridrop.com/
+
+User-agent: *
+Disallow: /php/
+Disallow: /admin/
+Disallow: /cgi-bin/
+Disallow: /tmp/
+Disallow: /private/
+Disallow: /includes/
+Disallow: /error_log
+Disallow: /.htaccess
+Disallow: /*.sql$
+Disallow: /*.log$
+Disallow: /*.bak$
+Disallow: /*.json$
+Disallow: /*.config$
+Disallow: /*.inc$
+Disallow: /*.ini$
+Disallow: /*.md$
+Disallow: /thank-you
+
+# Allow CSS, JS, and images
+Allow: /*.css$
+Allow: /*.js$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.gif$
+Allow: /*.svg$
+Allow: /*.webp$
+
+# Sitemap location
+Sitemap: https://www.afridrop.com/sitemap.xml

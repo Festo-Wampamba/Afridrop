@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300" fill="none">
+  <rect width="300" height="300" fill="#009FCE"/>
+  <circle cx="150" cy="100" r="50" fill="#002B4A"/>
+  <rect x="75" y="160" width="150" height="140" rx="10" fill="#002B4A"/>
+  <text x="150" y="270" font-family="Arial" font-size="24" fill="white" text-anchor="middle">Robert Kigozi</text>
+  <text x="150" y="240" font-family="Arial" font-size="16" fill="white" text-anchor="middle">Head of Operations</text>
+</svg>
