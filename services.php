@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet"> 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
-    <link rel="stylesheet" href="css/styles.css">
+    <!-- <link rel="stylesheet" href="css/styles.css"> -->
     <link rel="stylesheet" href="css/services.css"> 
 </head> 
 <body class="bg-gray-50"> 
@@ -801,7 +801,7 @@
                         </li>
                         <li class="footer__contact-item">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                            <span>salest@afridropsolutions.com<br>info@afridropsolutions.com</span>
+                            <span>sales@afridropsolutions.com<br>info@afridropsolutions.com</span>
                         </li>
                         <li class="footer__contact-item">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
@@ -816,7 +816,7 @@
                     <span class="footer__payment-label">Payment Methods </span>
                     <div class="footer__payment-icons">
                         <!-- Visa -->
-                    <img src="assets/Images/mobilemoney.png" alt="Credit Card Icon" width="50" height="50" loading="lazy" class="payment-icon animate-bounce">
+                    <img src="assets/Images/mobilemoney.png" alt="Credit Card Icon" width="50" height="50" loading="lazy">
                         
                         <!-- Airtel Money -->
                         <img src="assets/Images/airtel.png" alt="Credit Card Icon" width="40" height="40" loading="lazy">

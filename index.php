@@ -416,7 +416,7 @@
                         </div>
                         <div class="contact-item__content">
                             <h4 class="contact-item__label">Email Address</h4>
-                            <p class="contact-item__value">Support@AfridropSolutions.Com<br>Info@AfridropSolutions.Com</p>
+                            <p class="contact-item__value">sales@afridropsolutions.com<br>info@afridropSolutions.com</p>
                         </div>
                         </div>
                         
