@@ -10,6 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+
       # 🆕  install PHP and Composer
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -22,7 +23,6 @@ jobs:
 
       - name: PHPUnit
         run: ./vendor/bin/phpunit --colors=always
-
 
   deploy:
     if: github.ref == 'refs/heads/main' && success()
