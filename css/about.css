@@ -39,7 +39,7 @@
     background-image: linear-gradient(to right, rgba(0, 159, 227, 0.9), rgba(0, 84, 166, 0.85)), url('../assets/Images/AfriTeam.webp');
     background-size: cover;
     background-position: center;
-    min-height: 100px;
+    min-height: 400px;
     display: flex;
     align-items: center;
     justify-content: center;

@@ -14,7 +14,7 @@
     position: relative;
     height: 65vh;
     min-height: 450px;
-    background-image: linear-gradient(rgba(0, 71, 122, 0.5), rgba(0, 159, 206, 0.3)), url('../assets/Images/AfriTeam.png');
+    background-image: linear-gradient(rgba(0, 71, 122, 0.5), rgba(0, 159, 206, 0.3)), url('../assets/Images/wavespool.webp');
     background-size: cover;
     background-position: center bottom; /* Focus on the main subject and pool area */
     background-repeat: no-repeat;
