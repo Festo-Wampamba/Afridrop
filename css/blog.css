@@ -734,6 +734,10 @@
     transition: max-height 0.3s ease;
 }
 
+.faq__item.active .faq__answer {
+    max-height: 500px;
+}
+
 .faq__answer p {
     padding: 0 var(--spacing-lg) var(--spacing-lg);
     margin: 0;
@@ -875,6 +879,11 @@
     
     .faq__answer p {
         padding: 0 var(--spacing-md) var(--spacing-md);
+    }
+    
+    /* Hide quote button on small screens */
+    .header__cta {
+        display: none;
     }
 }
 

@@ -639,7 +639,7 @@
 </section>
 
 <!-- CTA Section --> 
-<section class="py-16 bg-cover bg-center" style="background-image: linear-gradient(to right, rgba(0, 159, 227, 0.9), rgba(0, 84, 166, 0.9)), url('assets/Images/PoolHero.jpg');"> 
+<section class="py-16 bg-cover bg-center" style="background-image: linear-gradient(to right, rgba(0, 159, 227, 0.9), rgba(0, 84, 166, 0.9)), url('assets/Images/HeroPool.webp');"> 
     <div class="container mx-auto px-4"> 
         <div class="text-center text-white"> 
             <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">Ready to Transform Your Pool Experience?</h2>
