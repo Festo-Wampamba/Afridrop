@@ -33,7 +33,7 @@ if (!isset($_SESSION['csrf_token'])) {
     <meta property="og:title" content="Access Forbidden - Afridrop Solutions">
     <meta property="og:description" content="You don't have permission to access this page. Explore Afridrop Solutions for professional pool services in Uganda.">
     <meta property="og:image" content="/assets/og-image.jpg">
-    <meta property="og:url" content="https://www.afridrop.co.ug/403">
+    <meta property="og:url" content="https://www.afridrop.com/403">
     <meta property="og:type" content="website">
     
     <!-- Twitter Card data -->
@@ -180,11 +180,11 @@ if (!isset($_SESSION['csrf_token'])) {
                         </p>
                         <p>
                             <svg class="icon"><use xlink:href="#icon-phone"></use></svg>
-                            <span><a href="tel:+256700123456">+256 700 123 456</a></span>
+                            <span><a href="tel:+256700123456">+256 784 464754</a></span>
                         </p>
                         <p>
                             <svg class="icon"><use xlink:href="#icon-email"></use></svg>
-                            <span><a href="mailto:info@afridrop.co.ug">info@afridrop.co.ug</a></span>
+                            <span><a href="mailto:info@afridrop.co.ug">info@afridrop.com</a></span>
                         </p>
                         <p>
                             <svg class="icon"><use xlink:href="#icon-clock"></use></svg>
