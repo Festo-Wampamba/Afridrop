@@ -805,7 +805,7 @@
 }
 
 /* Mobile Styles */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
     .blog-hero {
         height: 50vh;
         min-height: 300px;
@@ -881,10 +881,10 @@
         padding: 0 var(--spacing-md) var(--spacing-md);
     }
     
-    /* Hide quote button on small screens */
+
+    /* Hide quote button on small screens - using !important to override styles.css */
     .header__cta {
-        display: none;
-    }
+        display: none !important;
 }
 
 /* ===================================
@@ -953,6 +953,7 @@ html {
 *:focus {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
+}
 }
 
 /* Print styles */
