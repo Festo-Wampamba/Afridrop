@@ -178,7 +178,7 @@
                 
                 <div class="projects__grid">
                     <div class="project-card">
-                        <img src="assets/Images/HomePool.png" alt="Residential Family Pool" width="400" height="300" loading="lazy" class="project-card__image">
+                        <img src="assets/Images/HomePool.webp" alt="Residential Family Pool" width="400" height="300" loading="lazy" class="project-card__image">
                         <div class="project-card__overlay">
                             <h3 class="project-card__title">Homeowner, Pool</h3>
                             <p class="project-card__location">Kampala, Uganda</p>

@@ -78,7 +78,7 @@
                     <div class="gallery-item" data-category="residential">
                         <div class="gallery-card">
                             <div class="gallery-card__image-container">
-                                <img src="assets/Images/HomePool.png" alt="Residential Family Pool" class="gallery-card__image" loading="lazy">
+                                <img src="assets/Images/HomePool.webp" alt="Residential Family Pool" class="gallery-card__image" loading="lazy">
                                 <div class="gallery-card__overlay">
                                     <a href="#project-1" class="gallery-card__link" aria-label="View Residential Family Pool details">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
@@ -179,7 +179,7 @@
                     <div class="gallery-item" data-category="specialty">
                         <div class="gallery-card">
                             <div class="gallery-card__image-container">
-                                <img src="assets/Images/InfintyLuxryPool.jpg" alt="Infinity Luxury Pool" class="gallery-card__image" loading="lazy">
+                                <img src="assets/Images/InfintyLuxryPool.webp" alt="Infinity Luxury Pool" class="gallery-card__image" loading="lazy">
                                 <div class="gallery-card__overlay">
                                     <a href="#project-3" class="gallery-card__link" aria-label="View Infinity Luxury Pool details">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
@@ -201,7 +201,7 @@
                                     <p class="project-modal__location">Jinja, Uganda</p>
                                 </div>
                                 <div class="project-modal__gallery">
-                                    <img src="assets/Images/InfintyLuxryPool.jpg" alt="Infinity Luxury Pool" class="project-modal__image">
+                                    <img src="assets/Images/InfintyLuxryPool.webp" alt="Infinity Luxury Pool" class="project-modal__image">
                                 </div>
                                 <div class="project-modal__details">
                                     <div class="project-modal__info">
@@ -432,7 +432,7 @@
                     <div class="gallery-item" data-category="commercial">
                         <div class="gallery-card">
                             <div class="gallery-card__image-container">
-                                <img src="assets/Images/KampalaInternational.webp" alt="Hotel Swimming Pool" class="gallery-card__image" loading="lazy">
+                                <img src="assets/Images/HeroPool_1.webp" alt="Hotel Swimming Pool" class="gallery-card__image" loading="lazy">
                                 <div class="gallery-card__overlay">
                                     <a href="#project-8" class="gallery-card__link" aria-label="View Hotel Swimming Pool details">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
@@ -454,7 +454,7 @@
                                     <p class="project-modal__location">Entebbe, Uganda</p>
                                 </div>
                                 <div class="project-modal__gallery">
-                                    <img src="assets/Images/KampalaInternational.webp" alt="Hotel Swimming Pool" class="project-modal__image">
+                                    <img src="assets/Images/HeroPool_1.webp" alt="Hotel Swimming Pool" class="project-modal__image">
                                 </div>
                                 <div class="project-modal__details">
                                     <div class="project-modal__info">
