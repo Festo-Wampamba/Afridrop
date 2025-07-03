@@ -242,19 +242,31 @@ function initFAQAccordion() {
     faqQuestions.forEach(question => {
         question.addEventListener('click', function() {
             const faqItem = this.closest('.faq__item');
+            const faqAnswer = faqItem.querySelector('.faq__answer');
             const isActive = faqItem.classList.contains('active');
             
             // Close all other FAQ items
             document.querySelectorAll('.faq__item').forEach(item => {
-                item.classList.remove('active');
-                const btn = item.querySelector('.faq__question');
-                btn.setAttribute('aria-expanded', 'false');
+                if (item !== faqItem) {
+                    item.classList.remove('active');
+                    const btn = item.querySelector('.faq__question');
+                    const answer = item.querySelector('.faq__answer');
+                    btn.setAttribute('aria-expanded', 'false');
+                    answer.style.maxHeight = '0';
+                }
             });
             
             // Toggle current item
             if (!isActive) {
                 faqItem.classList.add('active');
                 this.setAttribute('aria-expanded', 'true');
+                // Calculate and set the actual content height
+                const contentHeight = faqAnswer.scrollHeight;
+                faqAnswer.style.maxHeight = contentHeight + 'px';
+            } else {
+                faqItem.classList.remove('active');
+                this.setAttribute('aria-expanded', 'false');
+                faqAnswer.style.maxHeight = '0';
             }
         });
         

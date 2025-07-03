@@ -427,7 +427,7 @@ p {
     max-height: 800px;
     display: flex;
     align-items: center;
-    background-image: linear-gradient(rgba(0, 43, 74, 0.7), rgba(0, 43, 74, 0.7)), url('../assets/Images/HeroPool.jpg');
+    background-image: linear-gradient(rgba(0, 43, 74, 0.7), rgba(0, 43, 74, 0.7)), url('../assets/Images/HeroPool.webp');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -1260,29 +1260,47 @@ p {
 }
 
 .footer__bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: var(--spacing-xl) 0;
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    padding-top: var(--spacing-lg);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-wrap: wrap;
+    gap: var(--spacing-lg);
 }
 
 .footer__payment {
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
+    flex-wrap: wrap;
 }
 
 .footer__payment-label {
-    color: var(--ice-dark);
+    color: var(--seafoam-tint-40);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
 }
 
 .footer__payment-icons {
     display: flex;
+    align-items: center;
     gap: var(--spacing-sm);
+    flex-wrap: wrap;
 }
 
+.footer__payment-icons img {
+    height: 30px;
+    width: auto;
+    border-radius: var(--border-radius-sm);
+    background-color: white;
+    padding: 4px;
+    transition: transform var(--transition-fast);
+}
+
+.footer__payment-icons img:hover {
+    transform: scale(1.1);
+}
 .footer__copyright {
     color: var(--ice-dark);
     font-size: var(--font-size-sm);

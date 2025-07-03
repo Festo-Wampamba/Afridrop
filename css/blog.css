@@ -14,7 +14,7 @@
     position: relative;
     height: 65vh;
     min-height: 450px;
-    background-image: linear-gradient(rgba(0, 71, 122, 0.5), rgba(0, 159, 206, 0.3)), url('../assets/Images/AfriTeam.png');
+    background-image: linear-gradient(rgba(0, 71, 122, 0.5), rgba(0, 159, 206, 0.3)), url('../assets/Images/HeroPool_1.webp');
     background-size: cover;
     background-position: center bottom; /* Focus on the main subject and pool area */
     background-repeat: no-repeat;
@@ -731,7 +731,7 @@
 .faq__answer {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.2s ease;
+    transition: max-height 0.3s ease;
 }
 
 .faq__item.active .faq__answer {
@@ -881,10 +881,10 @@
         padding: 0 var(--spacing-md) var(--spacing-md);
     }
     
+
     /* Hide quote button on small screens - using !important to override styles.css */
     .header__cta {
         display: none !important;
-    }
 }
 
 /* ===================================

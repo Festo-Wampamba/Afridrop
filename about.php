@@ -161,7 +161,7 @@
 
                 <div class="team__grid">
                     <div class="team-member">
-                        <img src="assets/Images/DirectorPic.webp" alt="Asaba Gorret" class="team-member__image" width="300" height="300" loading="lazy">
+                        <img src="assets/Images/CEOgorret.webp" alt="Asaba Gorret" class="team-member__image" width="300" height="300" loading="lazy">
                         <div class="team-member__info">
                             <h3 class="team-member__name">Asaba Gorret</h3>
                             <p class="team-member__position">Founder & CEO</p>
@@ -179,7 +179,7 @@
                     </div>
 
                     <div class="team-member">
-                        <img src="assets/Images/CEO-HomePool.webp" alt="Murungi Moriss" class="team-member__image" width="300" height="300" loading="lazy">
+                        <img src="assets/Images/moris.webp" alt="Murungi Moriss" class="team-member__image" width="300" height="300" loading="lazy">
                         <div class="team-member__info">
                             <h3 class="team-member__name">Murungi Moriss</h3>
                             <p class="team-member__position">Head of Operations</p>

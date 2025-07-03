@@ -10,7 +10,7 @@
 .breadcrumb {
     display: inline-flex;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-top: 1rem;
 }
 
 .breadcrumb a {
@@ -36,10 +36,10 @@
 /* Page Hero Section */
 .page-hero {
     position: relative;
-    background-image: linear-gradient(to right, rgba(0, 159, 227, 0.9), rgba(0, 84, 166, 0.85)), url('../assets/Images/AfriTeam.webp');
+    background-image: linear-gradient(to right, rgba(0, 159, 227, 0.9), rgba(0, 84, 166, 0.85)), url('../assets/Images/abouthero.webp');
     background-size: cover;
     background-position: center;
-    min-height: 100px;
+    min-height: 350px;
     display: flex;
     align-items: center;
     justify-content: center;

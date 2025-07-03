@@ -84,7 +84,7 @@
             <div class="container">
                 <article class="featured-card">
                     <div class="featured-card__image">
-                        <img src="assets/Images/HarshWeather.webp" alt="Man testing pool water" loading="lazy">
+                        <img src="assets/Images/testingpool.webp" alt="Man testing pool water" loading="lazy">
                     </div>
                     <div class="featured-card__content">
                         <div class="featured-card__badges">
