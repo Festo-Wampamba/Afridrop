@@ -1345,6 +1345,30 @@ p {
    Media Queries
    ========================================================================== */
 
+@media (max-width: 480px) {
+    .footer__grid {
+        gap: var(--spacing-xl);
+    }
+    
+    .footer__social-link {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .footer__social-link svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .footer__payment-icons {
+        gap: var(--spacing-xs);
+    }
+    
+    .footer__payment-icons img {
+        height: 25px;
+    }
+}
+
 /* Small devices (landscape phones, 576px and up) */
 @media (max-width: 576px) {
     :root {
@@ -1378,13 +1402,7 @@ p {
     .newsletter-form__group {
         flex-direction: column;
     }
-    
-    .footer__bottom {
-        flex-direction: column;
-        gap: var(--spacing-md);
-        text-align: center;
-    }
-    
+
     /* Fix for icons on mobile */
     .service-card__icon img,
     .feature__icon img {
@@ -1398,10 +1416,6 @@ p {
         height: 20px;
     }
     
-    .footer__social-link {
-        width: 36px;
-        height: 36px;
-    }
 }
 
 /* Medium devices (tablets, 768px and up) */
@@ -1493,6 +1507,44 @@ p {
     .stat {
         min-width: 200px;
     }
+
+    .footer {
+        padding: var(--spacing-3xl) 0 0;
+    }
+    
+    .footer__grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-2xl);
+        text-align: center;
+    }
+    
+    .footer__column--about {
+        max-width: none;
+    }
+    
+    .footer__social {
+        justify-content: center;
+    }
+    
+    .footer__heading::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .footer__contact-item {
+        justify-content: center;
+        text-align: left;
+    }
+    
+    .footer__bottom {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-md);
+    }
+    
+    .footer__payment {
+        justify-content: center;
+    }
 }
 
 /* Large devices (desktops, 992px and up) */
@@ -1507,28 +1559,6 @@ p {
     
     .contact .container {
         grid-template-columns: 1fr;
-    }
-    
-    .footer__bottom {
-        flex-direction: column;
-        text-align: center;
-        gap: var(--spacing-md);
-    }
-    
-    .footer__payment {
-        flex-direction: column;
-        text-align: center;
-        gap: var(--spacing-sm);
-    }
-    
-    .footer__payment-icons {
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-    
-    .footer__payment-icons svg {
-        width: 35px;
-        height: 22px;
     }
     
     .star-rating {

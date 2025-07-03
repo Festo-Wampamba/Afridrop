@@ -239,6 +239,15 @@ function updatePaginationButtons(currentPage) {
 function initFAQAccordion() {
     const faqQuestions = document.querySelectorAll('.faq__question');
     
+    // Initialize FAQ items - ensure they start closed
+    document.querySelectorAll('.faq__item').forEach(item => {
+        const answer = item.querySelector('.faq__answer');
+        const question = item.querySelector('.faq__question');
+        item.classList.remove('active'); // Ensure no active class
+        question.setAttribute('aria-expanded', 'false');
+        answer.style.maxHeight = '0';
+    });
+    
     faqQuestions.forEach(question => {
         question.addEventListener('click', function() {
             const faqItem = this.closest('.faq__item');

@@ -731,11 +731,13 @@
 .faq__answer {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
 }
 
 .faq__item.active .faq__answer {
     max-height: 500px;
+    opacity: 1;
 }
 
 .faq__answer p {
