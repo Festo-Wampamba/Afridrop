@@ -735,7 +735,7 @@
 }
 
 .faq__item.active .faq__answer {
-    max-height: 200px;
+    max-height: 500px;
 }
 
 .faq__answer p {
@@ -805,7 +805,7 @@
 }
 
 /* Mobile Styles */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
     .blog-hero {
         height: 50vh;
         min-height: 300px;
@@ -879,6 +879,11 @@
     
     .faq__answer p {
         padding: 0 var(--spacing-md) var(--spacing-md);
+    }
+    
+    /* Hide quote button on small screens - using !important to override styles.css */
+    .header__cta {
+        display: none !important;
     }
 }
 
