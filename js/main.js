@@ -8,9 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initNavigation();
     initTestimonialSlider();
     initContactForm();
-    // initNewsletterForm(); // Now handled in blog.js
+    initNewsletterForm();
     initScrollEffects();
-    // initBlogSearch(); // Now handled in blog.js
+    initBlogSearch();
     initCounters();
     
     // FAQ accordion functionality
@@ -266,9 +266,72 @@ function initContactForm() {
 
 /**
  * Newsletter Form Handling
- * @deprecated This function has been moved to blog.js to avoid duplication
  */
-// Function removed to avoid duplication with blog.js implementation
+function initNewsletterForm() {
+    const newsletterForm = document.getElementById('newsletterForm');
+    const formResponse = document.querySelector('.newsletter-form__response');
+    
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Show loading state
+            const submitButton = newsletterForm.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+            submitButton.textContent = 'Subscribing...';
+            submitButton.disabled = true;
+            
+            // Collect form data
+            const formData = new FormData(newsletterForm);
+            
+            // Send form data using fetch API
+            fetch(newsletterForm.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Reset button state
+                submitButton.textContent = originalButtonText;
+                submitButton.disabled = false;
+                
+                // Show response message
+                if (formResponse) {
+                    formResponse.textContent = data.message || 'Thank you for subscribing to our newsletter!';
+                    formResponse.className = 'newsletter-form__response newsletter-form__response--' + (data.success ? 'success' : 'error');
+                    
+                    // Reset form if successful
+                    if (data.success) {
+                        newsletterForm.reset();
+                    }
+                    
+                    // Hide message after 5 seconds
+                    setTimeout(() => {
+                        formResponse.className = 'newsletter-form__response';
+                    }, 5000);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                
+                // Reset button state
+                submitButton.textContent = originalButtonText;
+                submitButton.disabled = false;
+                
+                // Show error message
+                if (formResponse) {
+                    formResponse.textContent = 'An error occurred. Please try again later.';
+                    formResponse.className = 'newsletter-form__response newsletter-form__response--error';
+                    
+                    // Hide message after 5 seconds
+                    setTimeout(() => {
+                        formResponse.className = 'newsletter-form__response';
+                    }, 5000);
+                }
+            });
+        });
+    }
+}
 
 /**
  * Scroll Effects
@@ -345,9 +408,137 @@ function initScrollEffects() {
 
 /**
  * Blog Search Functionality
- * @deprecated This function has been moved to blog.js to avoid duplication
  */
-// Function removed to avoid duplication with blog.js implementation
+function initBlogSearch() {
+    const searchForm = document.querySelector('.blog-hero__search-form');
+    const searchInput = document.querySelector('.blog-hero__search-input');
+    const blogGrid = document.querySelector('.blog-grid');
+    const blogCards = document.querySelectorAll('.blog-card');
+    const featuredPost = document.querySelector('.featured-post');
+    
+    if (searchForm && searchInput && blogGrid && blogCards.length > 0 && featuredPost) {
+        // Create search results container
+        const searchResults = document.createElement('div');
+        searchResults.className = 'blog-search-results';
+        searchResults.style.display = 'none';
+        blogGrid.parentNode.insertBefore(searchResults, blogGrid);
+        
+        // Create no results message
+        const noResults = document.createElement('div');
+        noResults.className = 'blog-search-no-results';
+        noResults.innerHTML = '<p>No results found. Please try a different search term.</p>';
+        noResults.style.display = 'none';
+        blogGrid.parentNode.insertBefore(noResults, blogGrid);
+        
+        // Create loading indicator
+        const loadingIndicator = document.createElement('div');
+        loadingIndicator.className = 'blog-search-loading';
+        loadingIndicator.innerHTML = `
+            <div class="blog-search-loading__spinner"></div>
+            <p>Searching...</p>
+        `;
+        loadingIndicator.style.display = 'none';
+        blogGrid.parentNode.insertBefore(loadingIndicator, blogGrid);
+        
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            
+            // Show loading indicator
+            loadingIndicator.style.display = 'flex';
+            blogGrid.style.display = 'none';
+            featuredPost.style.display = 'none';
+            searchResults.style.display = 'none';
+            noResults.style.display = 'none';
+            
+            if (searchTerm.length < 2) {
+                // Show all blog cards if search term is too short
+                blogGrid.style.display = 'grid';
+                featuredPost.style.display = 'block';
+                searchResults.style.display = 'none';
+                noResults.style.display = 'none';
+                loadingIndicator.style.display = 'none';
+                return;
+            }
+            
+            // Simulate search delay for better UX
+            setTimeout(() => {
+            
+            // Filter blog cards based on search term
+            const matchingCards = [];
+            
+            blogCards.forEach(card => {
+                const title = card.querySelector('.blog-card__title').textContent.toLowerCase();
+                const excerpt = card.querySelector('.blog-card__excerpt').textContent.toLowerCase();
+                const category = card.querySelector('.blog-card__category').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || excerpt.includes(searchTerm) || category.includes(searchTerm)) {
+                    matchingCards.push(card.cloneNode(true));
+                }
+            });
+            
+            // Display search results
+            if (matchingCards.length > 0) {
+                // Clear previous results
+                searchResults.innerHTML = '';
+                
+                // Add heading
+                const heading = document.createElement('h2');
+                heading.className = 'blog-search-results__heading';
+                heading.textContent = `Search Results for "${searchTerm}" (${matchingCards.length})`;
+                searchResults.appendChild(heading);
+                
+                // Create grid for results
+                const resultsGrid = document.createElement('div');
+                resultsGrid.className = 'blog-search-results__grid';
+                searchResults.appendChild(resultsGrid);
+                
+                // Add matching cards to results grid
+                matchingCards.forEach(card => {
+                    resultsGrid.appendChild(card);
+                });
+                
+                // Show results, hide original grid, featured post, and no results message
+                blogGrid.style.display = 'none';
+                featuredPost.style.display = 'none';
+                searchResults.style.display = 'block';
+                noResults.style.display = 'none';
+                loadingIndicator.style.display = 'none';
+            } else {
+                // Show no results message
+                blogGrid.style.display = 'none';
+                featuredPost.style.display = 'none';
+                searchResults.style.display = 'none';
+                noResults.style.display = 'block';
+                loadingIndicator.style.display = 'none';
+            }
+            }, 800); // 800ms delay to show loading indicator
+            
+            // Add clear search button
+            if (!document.querySelector('.blog-search-clear')) {
+                const clearButton = document.createElement('button');
+                clearButton.className = 'blog-search-clear';
+                clearButton.textContent = 'Clear Search';
+                clearButton.addEventListener('click', function() {
+                    searchInput.value = '';
+                    blogGrid.style.display = 'grid';
+                    featuredPost.style.display = 'block';
+                    searchResults.style.display = 'none';
+                    noResults.style.display = 'none';
+                    loadingIndicator.style.display = 'none';
+                    this.remove();
+                });
+                
+                // Add clear button after search results or no results message
+                if (matchingCards.length > 0) {
+                    searchResults.appendChild(clearButton);
+                } else {
+                    noResults.appendChild(clearButton);
+                }
+            }
+        });
+    }
+}
 
 // Initialize navigation when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
@@ -440,8 +631,53 @@ function initScrollEffects() {
             });
         }
         
-        // Newsletter form handling is now implemented in blog.js
-        // This avoids duplication of code and ensures consistent behavior
+        // Newsletter form handling
+        const newsletterForm = document.getElementById('newsletterForm');
+        
+        if (newsletterForm) {
+            newsletterForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // Show loading state
+                const submitButton = newsletterForm.querySelector('button[type="submit"]');
+                const originalButtonText = submitButton.textContent;
+                submitButton.textContent = 'Subscribing...';
+                submitButton.disabled = true;
+                
+                // Collect form data
+                const formData = new FormData(newsletterForm);
+                
+                // Send form data using fetch API
+                fetch(newsletterForm.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Reset button state
+                    submitButton.textContent = originalButtonText;
+                    submitButton.disabled = false;
+                    
+                    // Show response as alert
+                    alert(data.message || 'Thank you for subscribing to our newsletter!');
+                    
+                    // Reset form if successful
+                    if (data.success) {
+                        newsletterForm.reset();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    
+                    // Reset button state
+                    submitButton.textContent = originalButtonText;
+                    submitButton.disabled = false;
+                    
+                    // Show error message
+                    alert('An error occurred. Please try again later.');
+                });
+            });
+        }
 
 // Gallery Filter Functionality
 function initGalleryFilter() {

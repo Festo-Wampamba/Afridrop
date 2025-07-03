@@ -151,12 +151,12 @@
 
                         <div class="why-us__stats">
                             <div class="stat">
-                                <span class="stat__number" data-target="500">0</span>
+                                <span class="stat__number" data-target="100">0</span>
                                 <span class="stat__suffix">+</span>
                                 <span class="stat__label">Projects Completed</span>
                             </div>
                             <div class="stat">
-                                <span class="stat__number" data-target="98">0</span>
+                                <span class="stat__number" data-target="99">0</span>
                                 <span class="stat__suffix">%</span>
                                 <span class="stat__label">Client Satisfaction</span>
                             </div>

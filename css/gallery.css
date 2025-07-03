@@ -362,6 +362,7 @@
     max-width: 900px;
 }
 
+
 @media (min-width: 768px) {
     .project-modal__gallery {
         grid-template-columns: repeat(2, 1fr);

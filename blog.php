@@ -205,7 +205,7 @@
                     <!-- Article 6 -->
                     <article class="article-card" data-category="industry-insights">
                         <div class="article-card__image">
-                            <img src="assets/Images/AfriTeam.webp" alt="Pool safety features" loading="lazy">
+                            <img src="assets/Images/poolSafety.webp" alt="Pool safety features" loading="lazy">
                         </div>
                         <div class="article-card__content">
                             <div class="article-card__meta">

@@ -489,7 +489,7 @@
                     <h2 class="cta__title">Ready to Start Your Dream Pool Project?</h2>
                     <p class="cta__text">Contact our team today for a consultation and free quote</p>
                     <div class="cta__buttons">
-                        <a href="contact.php" class="cta__button cta__button--primary">Get a Quote</a>
+                        <a href="contact.php" class="cta__button cta__button--primary" onmouseover="this.style.color='white'" onmouseout="this.style.color=''">Get a Quote</a>
                         <a href="services.php" class="cta__button cta__button--secondary">Explore Our Services</a>
                     </div>
                 </div>
