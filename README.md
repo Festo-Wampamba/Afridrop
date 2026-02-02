@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Afridrop Solutions
 
-## Getting Started
+![Afridrop Banner](/public/assets/Images/hero.png)
 
-First, run the development server:
+## 🌊 Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+**Afridrop** is Uganda's premier provider of professional swimming pool construction, maintenance, and water treatment solutions. This modern web application serves as the digital storefront and interaction hub for our clients, offering seamless service booking, real-time project updates, and interactive design tools.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This repository contains the source code for the official Afridrop website, completely modernized and built for performance, scalability, and user experience.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Purpose
 
-## Learn More
+The primary goal of this platform is to revolutionize how customers interact with pool construction services in East Africa.
 
-To learn more about Next.js, take a look at the following resources:
+**Key Features:**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Dynamic Pool Configurator**: An interactive tool allowing users to design their dream pool, select features, and get estimated costs in real-time.
+- **Client Portal**: A dedicated dashboard for clients to track their ongoing projects, view timelines, and access documents.
+- **Service Management**: Detailed breakdowns of our construction process, maintenance packages, and water treatment services.
+- **E-Commerce Ready**: Infrastructure for selling pool equipment and chemicals (products, cart, checkout flows).
+- **Educational Blog**: A resource center for maintenance tips and industry news.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🛠️ Technology Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project utilizes cutting-edge web technologies to ensure a fast, SEO-friendly, and maintainable application.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router, Server Actions)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Database**: PostgreSQL
+- **ORM**: [Drizzle ORM](https://orm.drizzle.team/)
+- **Authentication**: [NextAuth.js](https://authjs.dev/)
+- **Payment Processing**: Flutterwave
+
+For a deep dive into the system architecture, database design, and security protocols, please refer to the [Technical Documentation](./TECHNICAL_DOCUMENTATION.md).
+
+---
+
+## 👨‍💻 Developers
+
+Developed and Maintained by:
+
+**Festo Wampamba**  
+_Lead Software Engineer_  
+[GitHub Profile](https://github.com/Festo-Wampamba)
+
+---
+
+## 📄 License
+
+This project is proprietary software consisting of confidential information. Unauthorized copying, transfer, or use of this file, via any medium is strictly prohibited.
