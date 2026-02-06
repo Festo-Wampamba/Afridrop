@@ -13,6 +13,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Gallery', href: '/gallery' },
   { label: 'Blog', href: '/blog' },
   { label: 'Contact', href: '/contact' },
+  { label: 'Client Portal', href: '/portal/login' },
 ];
 
 export default function Header() {
