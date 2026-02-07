@@ -6,7 +6,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gradient-to-br from-[#002B4A] to-[#00477A] text-white pt-16 relative border-t-4 border-[#009FCE]">
+    <footer className="bg-linear-to-br from-[#002B4A] to-[#00477A] text-white pt-16 relative border-t-4 border-[#009FCE]">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* About Column */}
@@ -75,7 +75,7 @@ export default function Footer() {
                 <Phone className="text-[#009FCE] shrink-0" size={20} />
                 <div className="flex flex-col gap-1">
                   <a href="tel:+256784464754" className="hover:text-[#009FCE] transition-colors">+256 7844 64754</a>
-                  <a href="tel:+2567527737779" className="hover:text-[#009FCE] transition-colors">+256 7527737779</a>
+                  <a href="tel:+256752737779" className="hover:text-[#009FCE] transition-colors">+256 7527 37779</a>
                 </div>
               </li>
               <li className="flex gap-4 text-sm text-[#E0F5FA]">

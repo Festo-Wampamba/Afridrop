@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import { Poppins, Inter } from 'next/font/google';
 import './globals.css';
-import Header from '../components/common/Header';
-import Footer from '../components/common/Footer';
+import ClientLayout from '../components/layout/ClientLayout';
 
 const poppins = Poppins({
   weight: ['400', '500', '600', '700', '800'],
@@ -30,11 +29,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable} ${inter.variable}`}>
       <body className="font-sans antialiased bg-slate-50 text-slate-800">
-        <Header />
-        <main className="min-h-screen pt-[72px]">
+        <ClientLayout>
           {children}
-        </main>
-        <Footer />
+        </ClientLayout>
       </body>
     </html>
   );
