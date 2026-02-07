@@ -90,7 +90,7 @@ export default function ContactPage() {
                     <h3 className="font-semibold text-[#00477A] mb-1">Phone Numbers</h3>
                     <p className="text-slate-600 flex flex-col gap-1">
                       <a href="tel:+256784464754" className="hover:text-[#009FCE] transition-colors w-fit">+256 7844 64754</a>
-                      <a href="tel:+2567527737779" className="hover:text-[#009FCE] transition-colors w-fit">+256 7527737779</a>
+                      <a href="tel:+256752737779" className="hover:text-[#009FCE] transition-colors w-fit">+256 7527 37779</a>
                     </p>
                   </div>
                 </div>

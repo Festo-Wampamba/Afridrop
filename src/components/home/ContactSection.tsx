@@ -32,7 +32,7 @@ export default function ContactSection() {
             <div className="bg-[#00477A] text-white rounded-2xl p-10 shadow-xl h-fit">
                <h3 className="text-2xl font-bold mb-8">Get in Touch</h3>
                <div className="space-y-8">
-                 <ContactItem Icon={Phone} title="Phone Number" content={<>+256 7844 64754<br/>+256 7527 737779</>} />
+                 <ContactItem Icon={Phone} title="Phone Number" content={<>+256 7844 64754<br/>+256 7527 37779</>} />
                  <ContactItem Icon={Mail} title="Email Address" content={<>sales@afridropsolutions.com<br/>info@afridropsolutions.com</>} />
                  <ContactItem Icon={MapPin} title="Our Location" content={<>Plot 67b, Spring Road Bugolobi, Kisakye<br/>Complex, P.O Box 72312 Kampala.</>} />
                  <ContactItem Icon={Clock} title="Business Hours" content={<>Mon-Fri: 8:00 AM - 6:00 PM<br/>Sat: 9:00 AM - 2:00 PM</>} />
