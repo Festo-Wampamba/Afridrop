@@ -36,6 +36,38 @@ This project utilizes cutting-edge web technologies to ensure a fast, SEO-friend
 - **Authentication**: [NextAuth.js](https://authjs.dev/)
 - **Payment Processing**: Flutterwave
 
+## 🔧 Troubleshooting
+
+### Database Connection Issues
+
+If you encounter `Tenant or user not found` or `ENETUNREACH` errors during `pnpm db:push` or `db:seed`:
+
+1.  **Get the Correct Connection String**:
+    - Go to [Supabase Dashboard](https://supabase.com/dashboard) -> Select Project -> Settings -> Database.
+    - Scroll to **Connection strings**.
+    - Click **"Transaction"** tab (Port 6543).
+    - Copy the **ENTIRE** string.
+
+2.  **Update .env.local**:
+
+    ```env
+    DATABASE_URL="postgresql://postgres.[PROJECT-REF]:[YOUR-PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres"
+    ```
+
+    - Ensure your password is URL-encoded if it has special characters (e.g., `@` becomes `%40`).
+    - **Crucial**: Use the "Transaction" pooler string to support IPv4 execution (fixes `ENETUNREACH`).
+
+3.  **Run Migrations**:
+    ```bash
+    pnpm db:push
+    pnpm db:seed
+    ```
+
+### Common Errors
+
+- **`ENETUNREACH`**: You are likely using the direct IPv6 connection string (`db.[project].supabase.co`) on a network/environment that prefers IPv4. Switch to the pooler connection string (port 6543).
+- **`Tenant or user not found`**: The project ID, region, or username format in your connection string is incorrect. Copy strictly from the "Transaction" tab in Supabase dashboard.
+
 For a deep dive into the system architecture, database design, and security protocols, please refer to the [Technical Documentation](./TECHNICAL_DOCUMENTATION.md).
 
 ---
