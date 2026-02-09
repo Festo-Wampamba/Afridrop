@@ -14,31 +14,35 @@ export default function DashboardView({
   user,
   dashboardData, 
   schedule, 
-  messages 
+  messages,
+  orderHistory,
+  billingData
 }: { 
   user: any,
   dashboardData: any, 
   schedule: any[], 
-  messages: any[] 
+  messages: any[],
+  orderHistory: any[],
+  billingData: any
 }) {
   const [activeTab, setActiveTab] = useState('dashboard');
 
   const renderTabContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <DashboardTab data={dashboardData} />;
+        return <DashboardTab data={dashboardData} onTabChange={setActiveTab} />;
       case 'schedule':
         return <ScheduleTab data={schedule} />;
       case 'messages':
         return <MessagesTab data={messages} />;
       case 'history':
-        return <HistoryTab />;
+        return <HistoryTab data={orderHistory} />;
       case 'billing':
-        return <BillingTab />;
+        return <BillingTab data={billingData} />;
       case 'analytics':
         return <AnalyticsTab />;
       default:
-        return <DashboardTab data={dashboardData} />;
+        return <DashboardTab data={dashboardData} onTabChange={setActiveTab} />;
     }
   };
 

@@ -1,12 +1,14 @@
-import { getDashboardData, getMessages, getSchedule } from '../actions';
+import { getDashboardData, getMessages, getSchedule, getOrderHistory, getBillingData } from '../actions';
 import DashboardView from './DashboardView';
 
 export default async function DashboardPage() {
   // Fetch data in parallel
-  const [dashboardData, schedule, messages] = await Promise.all([
+  const [dashboardData, schedule, messages, orderHistory, billingData] = await Promise.all([
     getDashboardData(),
     getSchedule(),
     getMessages(),
+    getOrderHistory(),
+    getBillingData(),
   ]);
 
   // If user not found (e.g. no mock user), redirect or show error
@@ -29,6 +31,9 @@ export default async function DashboardPage() {
       dashboardData={dashboardData}
       schedule={schedule}
       messages={messages}
+      orderHistory={orderHistory}
+      billingData={billingData}
     />
   );
 }
+
