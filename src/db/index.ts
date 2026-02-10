@@ -10,8 +10,12 @@ if (!process.env.DATABASE_URL) {
 const connectionString = process.env.DATABASE_URL;
 
 // For query purposes
-const queryClient = postgres(connectionString);
+const queryClient = postgres(connectionString, {
+  connect_timeout: 15,
+  idle_timeout: 20,
+  max: 10,
+});
 export const db = drizzle(queryClient, { schema });
 
 // For migrations
-export const migrationClient = postgres(connectionString, { max: 1 });
+export const migrationClient = postgres(connectionString, { max: 1, connect_timeout: 15 });
