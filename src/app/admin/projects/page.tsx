@@ -1,9 +1,9 @@
 import { db } from '@/db';
-import { projects, projectTags } from '@/db/schema';
+import { projects } from '@/db/schema';
 import { eq, desc, isNull } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { auth } from '@/lib/auth';
+import { requireRole } from '@/lib/auth';
 import Link from 'next/link';
 
 function slugify(text: string) {
@@ -12,8 +12,7 @@ function slugify(text: string) {
 
 async function createProject(formData: FormData) {
   'use server';
-  const session = await auth();
-  if (!session) throw new Error('Unauthorized');
+  const session = await requireRole();
 
   const title = formData.get('title') as string;
   const description = formData.get('description') as string;
@@ -35,8 +34,7 @@ async function createProject(formData: FormData) {
 
 async function updateProject(formData: FormData) {
   'use server';
-  const session = await auth();
-  if (!session) throw new Error('Unauthorized');
+  await requireRole();
 
   const id = formData.get('id') as string;
   const title = formData.get('title') as string;
@@ -59,8 +57,7 @@ async function updateProject(formData: FormData) {
 
 async function deleteProject(formData: FormData) {
   'use server';
-  const session = await auth();
-  if (!session) throw new Error('Unauthorized');
+  await requireRole();
 
   const id = formData.get('id') as string;
   await db.update(projects).set({ deletedAt: new Date() }).where(eq(projects.id, id));
@@ -107,20 +104,20 @@ export default async function ProjectsPage({
             {editProject && <input type="hidden" name="id" value={editProject.id} />}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Project Title</label>
-                <input name="title" defaultValue={editProject?.title} required className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">Project Title</label>
+                <input id="title" name="title" defaultValue={editProject?.title} required className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Client Name</label>
-                <input name="clientName" defaultValue={editProject?.clientName ?? ''} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
+                <label htmlFor="clientName" className="block text-sm font-medium text-gray-700 mb-1">Client Name</label>
+                <input id="clientName" name="clientName" defaultValue={editProject?.clientName ?? ''} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                <input name="location" defaultValue={editProject?.location ?? ''} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
+                <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                <input id="location" name="location" defaultValue={editProject?.location ?? ''} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select name="status" defaultValue={editProject?.status ?? 'planned'} className="w-full px-3 py-2 border rounded-lg text-sm">
+                <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select id="status" name="status" defaultValue={editProject?.status ?? 'planned'} className="w-full px-3 py-2 border rounded-lg text-sm">
                   <option value="planned">Planned</option>
                   <option value="in_progress">In Progress</option>
                   <option value="completed">Completed</option>
@@ -129,8 +126,8 @@ export default async function ProjectsPage({
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-              <textarea name="description" defaultValue={editProject?.description ?? ''} rows={4} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <textarea id="description" name="description" defaultValue={editProject?.description ?? ''} rows={4} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
             </div>
             <div className="flex gap-3 pt-2">
               <button type="submit" className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
