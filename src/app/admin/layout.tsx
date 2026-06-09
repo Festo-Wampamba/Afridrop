@@ -1,6 +1,7 @@
 import Link from "next/link"
-import { LayoutDashboard, ShoppingBag, Package, FolderKanban, FileText, Settings, Users, ArrowLeft } from "lucide-react"
-import { auth, signOut } from "@/lib/auth"
+import { LayoutDashboard, ShoppingBag, Package, FolderKanban, FileText, Settings, Users, Contact, ArrowLeft } from "lucide-react"
+import { auth, getSession } from "@/lib/auth"
+import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 
 export default async function AdminLayout({
@@ -8,7 +9,7 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const session = await auth()
+  const session = await getSession()
 
   if (!session?.user) {
     redirect("/auth/login")
@@ -34,6 +35,11 @@ export default async function AdminLayout({
             <span>Dashboard</span>
           </Link>
           
+          <Link href="/admin/clients" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+            <Contact size={20} />
+            <span>Clients</span>
+          </Link>
+
           <Link href="/admin/orders" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
             <ShoppingBag size={20} />
             <span>Orders</span>
@@ -77,7 +83,8 @@ export default async function AdminLayout({
           </div>
           <form action={async () => {
              'use server';
-             await signOut();
+             await auth.api.signOut({ headers: await headers() });
+             redirect('/auth/login');
           }}>
              <button type="submit" className="w-full mt-2 flex items-center justify-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">
                 <ArrowLeft size={16} />
