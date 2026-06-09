@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- TODO(phase 4/5): mock UI, rebuilt with real data + types */
 'use client';
 
 import { useState } from 'react';
@@ -103,8 +104,9 @@ export default function MessagesTab({ data }: { data: any[] }) {
               className="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#009FCE]/50 transition-all bg-slate-50 focus:bg-white"
             />
             <input type="hidden" name="subject" value="General Inquiry" />
-            <button 
-              type="submit" 
+            <button
+              type="submit"
+              aria-label="Send message"
               disabled={isSending || !newMessage.trim()}
               className="bg-[#009FCE] hover:bg-[#007FA5] text-white p-3 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
