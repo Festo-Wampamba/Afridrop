@@ -1,12 +1,12 @@
 import { db } from '@/db';
 import { users, orders, products, blogPosts, projects } from '@/db/schema';
 import { count, isNull, eq } from 'drizzle-orm';
-import { auth } from '@/lib/auth';
+import { getSession } from '@/lib/auth';
 import Link from 'next/link';
 import { Users, ShoppingBag, Package, FileText, FolderKanban, DollarSign } from 'lucide-react';
 
 export default async function AdminDashboard() {
-  const session = await auth();
+  const session = await getSession();
 
   // Run all stat queries in parallel for faster load
   const [
@@ -28,7 +28,6 @@ export default async function AdminDashboard() {
       where: isNull(users.deletedAt),
       orderBy: (users, { desc }) => [desc(users.createdAt)],
       limit: 5,
-      with: { rolesUsers: { with: { role: true } } },
     }),
   ]);
 
@@ -89,7 +88,7 @@ export default async function AdminDashboard() {
               </div>
               <div className="flex items-center gap-3">
                 <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                  {user.rolesUsers[0]?.role.name || 'No role'}
+                  {user.role || 'No role'}
                 </span>
                 <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                   {user.isActive ? 'Active' : 'Inactive'}
