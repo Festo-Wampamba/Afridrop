@@ -83,7 +83,7 @@ export default function GalleryPage() {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-[#00477A] mb-4">Want your pool to look this amazing?</h2>
-          <p className="text-slate-600 text-lg mb-8">Let's bring your pool vision to life</p>
+          <p className="text-slate-600 text-lg mb-8">Let&apos;s bring your pool vision to life</p>
           <a 
             href="/contact" 
             className="inline-block bg-[#009FCE] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[#00477A] transition-colors shadow-lg hover:-translate-y-1 transform duration-300"
