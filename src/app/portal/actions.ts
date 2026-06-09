@@ -7,13 +7,18 @@ import { messages } from '@/db/schema/messages';
 import { quotations } from '@/db/schema/quotations';
 import { eq, desc, and, count, or } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { getSession } from '@/lib/auth';
 
-// Mock getUser - in production this would use next-auth
+// Resolve the portal user strictly from the authenticated session.
+// Returns null when there is no valid session — never falls back to any account.
 async function getUser() {
+  const session = await getSession();
+  if (!session?.user?.id) return null;
+
   const user = await db.query.users.findFirst({
-    where: eq(users.email, 'admin@afridrop.com'),
+    where: eq(users.id, session.user.id),
   });
-  
+
   return user;
 }
 
