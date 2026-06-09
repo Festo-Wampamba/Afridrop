@@ -8,12 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
-
-function destinationForRole(role?: string) {
-  if (role === 'customer') return '/portal';
-  if (role === 'attendant') return '/attendant';
-  return '/admin';
-}
+import { homeForRole } from '@/lib/roles';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -37,7 +32,7 @@ export default function LoginPage() {
     }
 
     const role = (data?.user as { role?: string } | undefined)?.role;
-    router.push(destinationForRole(role));
+    router.push(homeForRole(role));
     router.refresh();
   };
 

@@ -1,0 +1,17 @@
+// Single source of truth for where each role lands after login. Pure (no
+// server imports) so both the client login page and server layouts can use it.
+export function homeForRole(role?: string | null): string {
+  switch (role) {
+    case 'customer':
+      return '/portal';
+    case 'attendant':
+      return '/attendant';
+    case 'manager':
+      return '/manager';
+    case 'admin':
+    case 'super_admin':
+      return '/admin';
+    default:
+      return '/';
+  }
+}
