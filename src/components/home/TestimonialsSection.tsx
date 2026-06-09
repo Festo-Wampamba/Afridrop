@@ -90,7 +90,7 @@ export default function TestimonialsSection() {
             </div>
 
             <p className="text-xl md:text-2xl leading-relaxed italic mb-8 font-light">
-              "{TESTIMONIALS[currentSlide].text}"
+              &quot;{TESTIMONIALS[currentSlide].text}&quot;
             </p>
 
             <div className="flex items-center gap-4">
