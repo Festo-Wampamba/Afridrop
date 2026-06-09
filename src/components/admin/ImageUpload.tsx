@@ -20,9 +20,9 @@ export default function ImageUpload({ name, defaultValue, label = 'Image' }: Ima
     if (!file) return;
 
     // Client-side validation
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml'];
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
     if (!allowedTypes.includes(file.type)) {
-      setError('Only JPEG, PNG, WebP, GIF, and SVG images are allowed');
+      setError('Only JPEG, PNG, WebP, and GIF images are allowed');
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
@@ -59,7 +59,7 @@ export default function ImageUpload({ name, defaultValue, label = 'Image' }: Ima
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="block text-sm font-medium text-gray-700">{label}</label>
+        <span className="block text-sm font-medium text-gray-700">{label}</span>
         <div className="flex gap-1 bg-gray-100 rounded-lg p-0.5">
           <button
             type="button"
@@ -89,6 +89,7 @@ export default function ImageUpload({ name, defaultValue, label = 'Image' }: Ima
         <div>
           <input
             type="url"
+            aria-label={`${label} URL`}
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
             className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -109,7 +110,8 @@ export default function ImageUpload({ name, defaultValue, label = 'Image' }: Ima
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/jpeg,image/jpg,image/png,image/webp,image/gif,image/svg+xml"
+              aria-label={`Upload ${label}`}
+              accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
               onChange={handleFileUpload}
               className="hidden"
             />
@@ -127,7 +129,7 @@ export default function ImageUpload({ name, defaultValue, label = 'Image' }: Ima
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <p className="mt-1 text-sm text-gray-600">Click to browse files</p>
-                <p className="text-xs text-gray-400">JPEG, PNG, WebP, GIF, SVG (max 5MB)</p>
+                <p className="text-xs text-gray-400">JPEG, PNG, WebP, GIF (max 5MB)</p>
               </div>
             )}
           </div>
@@ -141,6 +143,8 @@ export default function ImageUpload({ name, defaultValue, label = 'Image' }: Ima
       {/* Image preview */}
       {imageUrl && (
         <div className="relative mt-2">
+          {/* Transient client-side preview of a user-typed URL (unknown dimensions). */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={imageUrl}
             alt="Preview"
