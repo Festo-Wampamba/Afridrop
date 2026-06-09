@@ -1,13 +1,13 @@
 import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import bcrypt from 'bcrypt';
 import { revalidatePath } from 'next/cache';
-import { auth } from '@/lib/auth';
+import { headers } from 'next/headers';
+import { auth, getSession } from '@/lib/auth';
 
 async function updateProfile(formData: FormData) {
   'use server';
-  const session = await auth();
+  const session = await getSession();
   if (!session) throw new Error('Unauthorized');
 
   const firstName = formData.get('firstName') as string;
@@ -17,6 +17,7 @@ async function updateProfile(formData: FormData) {
 
   await db.update(users).set({
     firstName, lastName, email,
+    name: `${firstName} ${lastName}`,
     phone: phone || null,
     updatedAt: new Date(),
   }).where(eq(users.id, session.user.id));
@@ -25,7 +26,7 @@ async function updateProfile(formData: FormData) {
 
 async function changePassword(formData: FormData) {
   'use server';
-  const session = await auth();
+  const session = await getSession();
   if (!session) throw new Error('Unauthorized');
 
   const currentPassword = formData.get('currentPassword') as string;
@@ -33,21 +34,18 @@ async function changePassword(formData: FormData) {
   const confirmPassword = formData.get('confirmPassword') as string;
 
   if (newPassword !== confirmPassword) throw new Error('Passwords do not match');
-  if (newPassword.length < 6) throw new Error('Password must be at least 6 characters');
+  if (newPassword.length < 8) throw new Error('Password must be at least 8 characters');
 
-  const user = await db.query.users.findFirst({ where: eq(users.id, session.user.id) });
-  if (!user) throw new Error('User not found');
-
-  const isValid = await bcrypt.compare(currentPassword, user.passwordHash);
-  if (!isValid) throw new Error('Current password is incorrect');
-
-  const passwordHash = await bcrypt.hash(newPassword, 12);
-  await db.update(users).set({ passwordHash, updatedAt: new Date() }).where(eq(users.id, session.user.id));
+  // Better Auth verifies the current password and re-hashes the new one.
+  await auth.api.changePassword({
+    body: { currentPassword, newPassword, revokeOtherSessions: true },
+    headers: await headers(),
+  });
   revalidatePath('/admin/settings');
 }
 
 export default async function SettingsPage() {
-  const session = await auth();
+  const session = await getSession();
   if (!session) return null;
 
   const user = await db.query.users.findFirst({
@@ -69,20 +67,20 @@ export default async function SettingsPage() {
         <form action={updateProfile} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-              <input name="firstName" defaultValue={user.firstName} required className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
+              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+              <input id="firstName" name="firstName" defaultValue={user.firstName} required className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-              <input name="lastName" defaultValue={user.lastName} required className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
+              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+              <input id="lastName" name="lastName" defaultValue={user.lastName} required className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input type="email" name="email" defaultValue={user.email} required className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input id="email" type="email" name="email" defaultValue={user.email} required className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-              <input name="phone" defaultValue={user.phone ?? ''} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+              <input id="phone" name="phone" defaultValue={user.phone ?? ''} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
           <button type="submit" className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
@@ -96,17 +94,17 @@ export default async function SettingsPage() {
         <h3 className="text-lg font-semibold mb-4">Change Password</h3>
         <form action={changePassword} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
-            <input type="password" name="currentPassword" required className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
+            <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+            <input id="currentPassword" type="password" name="currentPassword" required className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-              <input type="password" name="newPassword" required minLength={6} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
+              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+              <input id="newPassword" type="password" name="newPassword" required minLength={8} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
-              <input type="password" name="confirmPassword" required minLength={6} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+              <input id="confirmPassword" type="password" name="confirmPassword" required minLength={8} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
           <button type="submit" className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
