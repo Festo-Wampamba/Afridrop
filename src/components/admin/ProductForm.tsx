@@ -28,16 +28,16 @@ export default function ProductForm({ action, editProduct, editProductImageUrl }
         {editProduct && <input type="hidden" name="id" value={editProduct.id} />}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-            <input name="name" defaultValue={editProduct?.name} required className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+            <input id="name" name="name" defaultValue={editProduct?.name} required className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">SKU</label>
-            <input name="sku" defaultValue={editProduct?.sku} required className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
+            <label htmlFor="sku" className="block text-sm font-medium text-gray-700 mb-1">SKU</label>
+            <input id="sku" name="sku" defaultValue={editProduct?.sku} required className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Price (UGX)</label>
-            <input name="price" type="number" step="1" defaultValue={editProduct?.price} required className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
+            <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">Price (UGX)</label>
+            <input id="price" name="price" type="number" step="1" defaultValue={editProduct?.price} required className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
           </div>
           <div className="flex items-center gap-6 pt-6">
             <label className="flex items-center gap-2 text-sm">
@@ -58,8 +58,8 @@ export default function ProductForm({ action, editProduct, editProductImageUrl }
         />
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-          <textarea name="description" defaultValue={editProduct?.description ?? ''} rows={4} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <textarea id="description" name="description" defaultValue={editProduct?.description ?? ''} rows={4} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500" />
         </div>
 
         {state && 'error' in state && state.error ? (
