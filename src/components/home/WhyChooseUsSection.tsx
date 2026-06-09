@@ -26,7 +26,7 @@ export default function WhyChooseUsSection() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-[#00477A] mb-4">Why Choose Afridrop Solutions</h2>
-          <p className="text-slate-600 text-lg">We are Uganda's trusted swimming pool specialists with years of experience</p>
+          <p className="text-slate-600 text-lg">We are Uganda&apos;s trusted swimming pool specialists with years of experience</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
