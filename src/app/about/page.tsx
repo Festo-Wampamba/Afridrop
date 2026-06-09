@@ -90,7 +90,7 @@ export default function AboutPage() {
               <h2 className="text-3xl md:text-4xl font-bold text-[#00477A] mb-6">Our Story</h2>
               <div className="space-y-4 text-slate-600 leading-relaxed">
                 <p>Afridrop Solutions Limited was founded in 2015 with a vision to transform the swimming pool industry in Uganda. What started as a small team of passionate pool enthusiasts has grown into a comprehensive pool solutions provider with a reputation for excellence.</p>
-                <p>Over the years, we've grown from handling basic pool maintenance to becoming the country's most trusted name in pool construction, renovation, maintenance, and water treatment. Our journey has been defined by our commitment to quality, innovation, and customer satisfaction.</p>
+                <p>Over the years, we&apos;ve grown from handling basic pool maintenance to becoming the country&apos;s most trusted name in pool construction, renovation, maintenance, and water treatment. Our journey has been defined by our commitment to quality, innovation, and customer satisfaction.</p>
                 <p>Today, we serve residential and commercial clients across Uganda, bringing world-class pool solutions and expertise to every project we undertake. Our team of certified professionals continues to raise the standard for pool services in the region.</p>
               </div>
             </div>
