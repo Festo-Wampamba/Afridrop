@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- TODO(phase 4/5): mock UI, rebuilt with real data + types */
 'use client';
 
-import { Bell } from 'lucide-react';
+import { Bell, Globe } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { signOut } from '@/lib/auth-client';
 import DashboardTab from './components/DashboardTab';
 import ScheduleTab from './components/ScheduleTab';
 import MessagesTab from './components/MessagesTab';
@@ -27,6 +29,13 @@ export default function DashboardView({
   billingData: any
 }) {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push('/auth/login');
+    router.refresh();
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -72,9 +81,12 @@ export default function DashboardView({
                   <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
                 )}
               </button>
-              <Link href="/portal/login" className="bg-[#009FCE] hover:bg-[#007FA5] px-4 py-2 rounded-lg font-medium transition-colors">
-                Sign Out
+              <Link href="/" className="hidden sm:inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg font-medium transition-colors">
+                <Globe size={18} /> Website
               </Link>
+              <button type="button" onClick={handleSignOut} className="bg-[#009FCE] hover:bg-[#007FA5] px-4 py-2 rounded-lg font-medium transition-colors">
+                Sign Out
+              </button>
             </div>
           </div>
         </div>

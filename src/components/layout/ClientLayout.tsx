@@ -4,21 +4,25 @@ import { usePathname } from 'next/navigation';
 import Header from '../common/Header';
 import Footer from '../common/Footer';
 
+// Authenticated/app areas render their own chrome — never the marketing
+// header/footer (which otherwise overlaps dashboard content).
+const APP_PREFIXES = ['/admin', '/manager', '/attendant', '/portal', '/auth'];
+
 export default function ClientLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isPortal = pathname?.startsWith('/portal');
+  const isApp = APP_PREFIXES.some((p) => pathname?.startsWith(p));
 
   return (
     <>
-      {!isPortal && <Header />}
-      <main className={`min-h-screen ${!isPortal ? 'pt-[72px]' : ''}`}>
+      {!isApp && <Header />}
+      <main className={`min-h-screen ${!isApp ? 'pt-[72px]' : ''}`}>
         {children}
       </main>
-      {!isPortal && <Footer />}
+      {!isApp && <Footer />}
     </>
   );
 }

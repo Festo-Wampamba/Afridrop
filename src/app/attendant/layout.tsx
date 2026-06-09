@@ -1,8 +1,9 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { auth, getSession } from '@/lib/auth';
 import { homeForRole } from '@/lib/roles';
-import { LogOut } from 'lucide-react';
+import { LogOut, Globe } from 'lucide-react';
 
 export default async function AttendantLayout({
   children,
@@ -29,7 +30,14 @@ export default async function AttendantLayout({
             <p className="text-xs font-medium uppercase tracking-wide text-[#B6E9F4]">Attendant Dashboard</p>
             <h1 className="text-xl font-bold mt-0.5">{session.user.name}</h1>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-sm font-medium hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
+            >
+              <Globe size={16} />
+              <span className="hidden sm:inline">Website</span>
+            </Link>
             <div className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-sm font-bold">
               {initial}
             </div>

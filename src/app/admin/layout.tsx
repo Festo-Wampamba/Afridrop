@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { LayoutDashboard, ShoppingBag, Package, FolderKanban, FileText, Settings, Users, Contact, ArrowLeft } from "lucide-react"
+import { LayoutDashboard, ShoppingBag, Package, FolderKanban, FileText, Settings, Users, Contact, ArrowLeft, ClipboardList, MessagesSquare, Globe } from "lucide-react"
 import { auth, getSession } from "@/lib/auth"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
@@ -45,6 +45,16 @@ export default async function AdminLayout({
             <span>Orders</span>
           </Link>
 
+          <Link href="/admin/jobs" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+            <ClipboardList size={20} />
+            <span>Service Requests</span>
+          </Link>
+
+          <Link href="/admin/messages" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+            <MessagesSquare size={20} />
+            <span>Messages</span>
+          </Link>
+
           <Link href="/admin/products" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
             <Package size={20} />
             <span>Products</span>
@@ -72,6 +82,10 @@ export default async function AdminLayout({
         </nav>
         
         <div className="p-4 mt-auto border-t border-gray-800">
+          <Link href="/" className="flex items-center gap-3 px-4 py-2 mb-1 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
+            <Globe size={18} />
+            <span className="text-sm">Back to Website</span>
+          </Link>
           <div className="flex items-center gap-3 px-4 py-3">
             <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-xs font-bold">
               {session.user.name?.[0] || 'A'}
