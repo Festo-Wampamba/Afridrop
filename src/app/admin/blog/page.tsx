@@ -3,8 +3,9 @@ import { blogPosts } from '@/db/schema';
 import { eq, desc, isNull, like } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { auth } from '@/lib/auth';
+import { hasRole, requireRole } from '@/lib/auth';
 import Link from 'next/link';
+import Image from 'next/image';
 import BlogForm from '@/components/admin/BlogForm';
 
 function slugify(text: string) {
@@ -29,7 +30,7 @@ async function generateUniqueSlug(baseSlug: string): Promise<string> {
 
 async function createPost(_prevState: unknown, formData: FormData) {
   'use server';
-  const session = await auth();
+  const session = await hasRole();
   if (!session) return { error: 'Unauthorized' };
 
   const title = formData.get('title') as string;
@@ -57,7 +58,7 @@ async function createPost(_prevState: unknown, formData: FormData) {
 
 async function updatePost(_prevState: unknown, formData: FormData) {
   'use server';
-  const session = await auth();
+  const session = await hasRole();
   if (!session) return { error: 'Unauthorized' };
 
   const id = formData.get('id') as string;
@@ -90,8 +91,7 @@ async function updatePost(_prevState: unknown, formData: FormData) {
 
 async function deletePost(formData: FormData) {
   'use server';
-  const session = await auth();
-  if (!session) throw new Error('Unauthorized');
+  await requireRole();
 
   const id = formData.get('id') as string;
   await db.update(blogPosts).set({ deletedAt: new Date() }).where(eq(blogPosts.id, id));
@@ -162,7 +162,7 @@ export default async function BlogPage({
               <tr key={post.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4">
                   {post.featuredImageUrl ? (
-                    <img src={post.featuredImageUrl} alt="" className="h-10 w-14 object-cover rounded" />
+                    <Image src={post.featuredImageUrl} alt="" width={56} height={40} className="h-10 w-14 object-cover rounded" />
                   ) : (
                     <div className="h-10 w-14 bg-gray-100 rounded flex items-center justify-center text-gray-400 text-xs">No img</div>
                   )}
