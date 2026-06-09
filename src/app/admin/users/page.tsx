@@ -1,62 +1,76 @@
 import { db } from '@/db';
-import { users, roles, rolesUsers } from '@/db/schema';
+import { users } from '@/db/schema';
 import { eq, desc, isNull } from 'drizzle-orm';
-import bcrypt from 'bcrypt';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { auth } from '@/lib/auth';
+import { headers } from 'next/headers';
+import { auth, requireRole } from '@/lib/auth';
 import Link from 'next/link';
+
+// super_admin is reserved and cannot be assigned through this UI.
+const ASSIGNABLE_ROLES = ['admin', 'manager', 'attendant', 'customer'] as const;
+type AssignableRole = (typeof ASSIGNABLE_ROLES)[number];
+
+function toAssignableRole(value: string): AssignableRole {
+  return (ASSIGNABLE_ROLES as readonly string[]).includes(value)
+    ? (value as AssignableRole)
+    : 'customer';
+}
 
 async function createUser(formData: FormData) {
   'use server';
-  const session = await auth();
-  if (!session || session.user.role !== 'super_admin') throw new Error('Unauthorized');
+  await requireRole(['super_admin']);
 
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
   const firstName = formData.get('firstName') as string;
   const lastName = formData.get('lastName') as string;
-  const roleId = formData.get('roleId') as string;
+  const role = (formData.get('role') as string) || 'customer';
 
-  const passwordHash = await bcrypt.hash(password, 12);
-  const [newUser] = await db.insert(users).values({
-    email, passwordHash, firstName, lastName,
-    emailVerified: false, isActive: true,
-  }).returning();
+  // Better Auth admin plugin creates the user + credential account + role.
+  await auth.api.createUser({
+    body: {
+      email,
+      password,
+      name: `${firstName} ${lastName}`,
+      role: toAssignableRole(role),
+      data: { firstName, lastName },
+    },
+    headers: await headers(),
+  });
 
-  if (roleId) {
-    await db.insert(rolesUsers).values({ userId: newUser.id, roleId });
-  }
   revalidatePath('/admin/users');
   redirect('/admin/users');
 }
 
 async function updateUser(formData: FormData) {
   'use server';
-  const session = await auth();
-  if (!session || session.user.role !== 'super_admin') throw new Error('Unauthorized');
+  await requireRole(['super_admin']);
 
   const id = formData.get('id') as string;
   const email = formData.get('email') as string;
   const firstName = formData.get('firstName') as string;
   const lastName = formData.get('lastName') as string;
   const isActive = formData.get('isActive') === 'on';
-  const roleId = formData.get('roleId') as string;
+  const role = formData.get('role') as string;
 
-  await db.update(users).set({ email, firstName, lastName, isActive }).where(eq(users.id, id));
+  await db.update(users).set({
+    email,
+    firstName,
+    lastName,
+    name: `${firstName} ${lastName}`,
+    isActive,
+    ...((ASSIGNABLE_ROLES as readonly string[]).includes(role) ? { role } : {}),
+    updatedAt: new Date(),
+  }).where(eq(users.id, id));
 
-  if (roleId) {
-    await db.delete(rolesUsers).where(eq(rolesUsers.userId, id));
-    await db.insert(rolesUsers).values({ userId: id, roleId });
-  }
   revalidatePath('/admin/users');
   redirect('/admin/users');
 }
 
 async function deleteUser(formData: FormData) {
   'use server';
-  const session = await auth();
-  if (!session || session.user.role !== 'super_admin') throw new Error('Unauthorized');
+  const session = await requireRole(['super_admin']);
 
   const id = formData.get('id') as string;
   if (id === session.user.id) throw new Error('Cannot delete yourself');
@@ -76,13 +90,9 @@ export default async function UsersPage({
 
   const allUsers = await db.query.users.findMany({
     where: isNull(users.deletedAt),
-    with: { rolesUsers: { with: { role: true } } },
     orderBy: desc(users.createdAt),
   });
 
-  const allRoles = await db.select().from(roles);
-  // Only allow assigning sub-admin roles — super_admin is reserved
-  const assignableRoles = allRoles.filter((r) => r.name !== 'super_admin');
   const editUser = editId ? allUsers.find((u) => u.id === editId) : null;
 
   return (
@@ -111,8 +121,9 @@ export default async function UsersPage({
             {editUser && <input type="hidden" name="id" value={editUser.id} />}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
                 <input
+                  id="firstName"
                   name="firstName"
                   defaultValue={editUser?.firstName}
                   required
@@ -120,8 +131,9 @@ export default async function UsersPage({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
                 <input
+                  id="lastName"
                   name="lastName"
                   defaultValue={editUser?.lastName}
                   required
@@ -129,8 +141,9 @@ export default async function UsersPage({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input
+                  id="email"
                   type="email"
                   name="email"
                   defaultValue={editUser?.email}
@@ -140,26 +153,28 @@ export default async function UsersPage({
               </div>
               {!editUser && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
                   <input
+                    id="password"
                     type="password"
                     name="password"
                     required
-                    minLength={6}
+                    minLength={8}
                     className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
               )}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">Role</label>
                 <select
-                  name="roleId"
-                  defaultValue={editUser?.rolesUsers[0]?.role.id}
+                  id="role"
+                  name="role"
+                  defaultValue={editUser?.role ?? ''}
                   className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Select Role</option>
-                  {assignableRoles.map((r) => (
-                    <option key={r.id} value={r.id}>{r.name}</option>
+                  {ASSIGNABLE_ROLES.map((r) => (
+                    <option key={r} value={r}>{r}</option>
                   ))}
                 </select>
               </div>
@@ -208,7 +223,7 @@ export default async function UsersPage({
                 <td className="px-6 py-4 text-sm text-gray-600">{user.email}</td>
                 <td className="px-6 py-4">
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                    {user.rolesUsers[0]?.role.name || 'No role'}
+                    {user.role || 'No role'}
                   </span>
                 </td>
                 <td className="px-6 py-4">
