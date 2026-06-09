@@ -21,7 +21,7 @@ export default function Footer() {
               />
             </div>
             <p className="text-[#E0F5FA] text-sm leading-relaxed">
-              Afridrop Solutions Limited is Uganda's premier swimming pool construction, maintenance, and water treatment provider, delivering exceptional quality and service.
+              Afridrop Solutions Limited is Uganda&apos;s premier swimming pool construction, maintenance, and water treatment provider, delivering exceptional quality and service.
             </p>
             <div className="flex gap-4">
               <SocialLink href="https://facebook.com" icon={<Facebook size={18} />} label="Facebook" />
@@ -98,18 +98,18 @@ export default function Footer() {
             <div className="flex items-center gap-4">
                 <span className="text-sm text-[#E0F5FA] font-medium">Payment Methods</span>
                 <div className="flex gap-2">
-                    <button className="bg-white p-1 rounded h-8 w-10 relative flex items-center justify-center hover:scale-110 transition-transform cursor-pointer shadow-sm">
+                    <div className="bg-white p-1 rounded h-8 w-10 relative flex items-center justify-center shadow-sm">
                       <Image src="/assets/Images/mobilemoney.png" alt="Mobile Money" fill className="object-contain p-0.5" />
-                    </button>
-                    <button className="bg-white p-1 rounded h-8 w-10 relative flex items-center justify-center hover:scale-110 transition-transform cursor-pointer shadow-sm">
+                    </div>
+                    <div className="bg-white p-1 rounded h-8 w-10 relative flex items-center justify-center shadow-sm">
                       <Image src="/assets/Images/airtel.png" alt="Airtel" fill className="object-contain p-0.5" />
-                    </button>
-                    <button className="bg-white p-1 rounded h-8 w-10 relative flex items-center justify-center hover:scale-110 transition-transform cursor-pointer shadow-sm">
+                    </div>
+                    <div className="bg-white p-1 rounded h-8 w-10 relative flex items-center justify-center shadow-sm">
                       <Image src="/assets/Images/visa.png" alt="Visa" fill className="object-contain p-0.5" />
-                    </button>
-                    <button className="bg-white p-1 rounded h-8 w-10 relative flex items-center justify-center hover:scale-110 transition-transform cursor-pointer shadow-sm">
+                    </div>
+                    <div className="bg-white p-1 rounded h-8 w-10 relative flex items-center justify-center shadow-sm">
                       <Image src="/assets/Images/card1.png" alt="Mastercard" fill className="object-contain p-0.5" />
-                    </button>
+                    </div>
                 </div>
             </div>
             <div className="text-sm text-[#E0F5FA] text-center">
