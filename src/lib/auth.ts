@@ -23,13 +23,15 @@ export const auth = betterAuth({
       generateId: false,
     },
   },
-  // Vercel serves each deployment on its own *.vercel.app host, which won't
-  // match BETTER_AUTH_URL. Trust all Vercel hosts plus any configured base URL
-  // (custom domain) so the origin check passes on preview and production.
+  // Each Vercel deployment is served on its own host that won't match
+  // BETTER_AUTH_URL. Trust only this project's exact hosts (the current
+  // deployment + the stable production host, both injected by Vercel) plus the
+  // configured base URL (custom domain) — never the whole *.vercel.app tenant.
   trustedOrigins: [
-    "https://*.vercel.app",
-    ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
-  ],
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : null,
+    process.env.BETTER_AUTH_URL ?? null,
+  ].filter((o): o is string => Boolean(o)),
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
