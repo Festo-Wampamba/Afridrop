@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { auth, requireRole } from '@/lib/auth';
+import { PasswordField } from '@/components/admin/PasswordField';
 import Link from 'next/link';
 
 // super_admin is reserved and cannot be assigned through this UI.
@@ -53,6 +54,7 @@ async function updateUser(formData: FormData) {
   const lastName = formData.get('lastName') as string;
   const isActive = formData.get('isActive') === 'on';
   const role = formData.get('role') as string;
+  const newPassword = (formData.get('password') as string)?.trim();
 
   await db.update(users).set({
     email,
@@ -63,6 +65,14 @@ async function updateUser(formData: FormData) {
     ...((ASSIGNABLE_ROLES as readonly string[]).includes(role) ? { role } : {}),
     updatedAt: new Date(),
   }).where(eq(users.id, id));
+
+  // Optional password reset — admin plugin re-hashes the credential account.
+  if (newPassword) {
+    await auth.api.setUserPassword({
+      body: { newPassword, userId: id },
+      headers: await headers(),
+    });
+  }
 
   revalidatePath('/admin/users');
   redirect('/admin/users');
@@ -151,18 +161,19 @@ export default async function UsersPage({
                   className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-              {!editUser && (
-                <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                  <input
-                    id="password"
-                    type="password"
-                    name="password"
-                    required
-                    minLength={8}
-                    className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
+              {editUser ? (
+                <PasswordField
+                  name="password"
+                  label="New Password"
+                  helperText="Leave blank to keep the current password."
+                />
+              ) : (
+                <PasswordField
+                  name="password"
+                  label="Password"
+                  required
+                  helperText="Minimum 8 characters."
+                />
               )}
               <div>
                 <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">Role</label>
