@@ -3,8 +3,9 @@ import { products, productImages } from '@/db/schema';
 import { eq, desc, isNull, like } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { auth } from '@/lib/auth';
+import { hasRole, requireRole } from '@/lib/auth';
 import Link from 'next/link';
+import Image from 'next/image';
 import ProductForm from '@/components/admin/ProductForm';
 
 function slugify(text: string) {
@@ -23,7 +24,7 @@ async function generateUniqueSlug(baseSlug: string): Promise<string> {
 
 async function createProduct(_prevState: unknown, formData: FormData) {
   'use server';
-  const session = await auth();
+  const session = await hasRole();
   if (!session) return { error: 'Unauthorized' };
 
   const name = formData.get('name') as string;
@@ -58,7 +59,7 @@ async function createProduct(_prevState: unknown, formData: FormData) {
 
 async function updateProduct(_prevState: unknown, formData: FormData) {
   'use server';
-  const session = await auth();
+  const session = await hasRole();
   if (!session) return { error: 'Unauthorized' };
 
   const id = formData.get('id') as string;
@@ -99,8 +100,7 @@ async function updateProduct(_prevState: unknown, formData: FormData) {
 
 async function deleteProduct(formData: FormData) {
   'use server';
-  const session = await auth();
-  if (!session) throw new Error('Unauthorized');
+  await requireRole();
   const id = formData.get('id') as string;
   await db.update(products).set({ deletedAt: new Date(), isActive: false }).where(eq(products.id, id));
   revalidatePath('/admin/products');
@@ -176,7 +176,7 @@ export default async function ProductsPage({
                 <tr key={product.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
                     {primaryImg ? (
-                      <img src={primaryImg.imageUrl} alt={product.name} className="h-10 w-14 object-cover rounded" />
+                      <Image src={primaryImg.imageUrl} alt={product.name} width={56} height={40} className="h-10 w-14 object-cover rounded" />
                     ) : (
                       <div className="h-10 w-14 bg-gray-100 rounded flex items-center justify-center text-gray-400 text-xs">No img</div>
                     )}
