@@ -1,4 +1,3 @@
-/* eslint-disable react/no-array-index-key */
 'use client';
 
 import { useState, useEffect } from 'react';
