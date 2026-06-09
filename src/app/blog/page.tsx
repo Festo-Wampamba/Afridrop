@@ -5,6 +5,9 @@ import { eq, isNull, desc, and } from 'drizzle-orm';
 import Image from 'next/image';
 import Link from 'next/link';
 
+// DB-backed listing — render per request, not prerendered at build time.
+export const dynamic = 'force-dynamic';
+
 export default async function BlogPage() {
   // Fetch published posts from the database
   const posts = await db.query.blogPosts.findMany({
