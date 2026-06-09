@@ -96,7 +96,7 @@ export default function ContactSection() {
 
               {formStatus === 'success' && (
                 <div className="p-4 bg-green-100 text-green-700 rounded-lg text-sm text-center font-medium animate-in fade-in slide-in-from-bottom-2">
-                  Message sent successfully! We'll get back to you soon.
+                  Message sent successfully! We&apos;ll get back to you soon.
                 </div>
               )}
             </form>
@@ -108,7 +108,7 @@ export default function ContactSection() {
   );
 }
 
-function ContactItem({ Icon, title, content }: { Icon: any, title: string, content: React.ReactNode }) {
+function ContactItem({ Icon, title, content }: { Icon: React.ElementType, title: string, content: React.ReactNode }) {
   return (
     <div className="flex gap-4">
       <div className="shrink-0">
