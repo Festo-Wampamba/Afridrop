@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { signIn } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,9 +9,15 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 
+function destinationForRole(role?: string) {
+  if (role === 'customer') return '/portal';
+  if (role === 'attendant') return '/attendant';
+  return '/admin';
+}
+
 export default function LoginPage() {
   const router = useRouter();
-  const [identifier, setIdentifier] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -21,33 +27,26 @@ export default function LoginPage() {
     setIsLoading(true);
     setError('');
 
-    try {
-      const result = await signIn('credentials', {
-        identifier,
-        password,
-        redirect: false,
-      });
+    const { data, error } = await signIn.email({ email, password });
 
-      if (result?.error) {
-        setError('Invalid email/username or password');
-      } else {
-        router.push('/admin');
-        router.refresh();
-      }
-    } catch (error) {
-      setError('An unexpected error occurred');
-    } finally {
+    if (error) {
+      setError(error.message || 'Invalid email or password');
       setIsLoading(false);
+      return;
     }
+
+    const role = (data?.user as { role?: string } | undefined)?.role;
+    router.push(destinationForRole(role));
+    router.refresh();
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Admin Login</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
           <CardDescription className="text-center">
-            Enter your credentials to access the admin dashboard
+            Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -58,13 +57,13 @@ export default function LoginPage() {
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="identifier">Email or Username</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="identifier"
-                type="text"
-                placeholder="admin@afridrop.com or username"
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
               />
