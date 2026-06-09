@@ -3,6 +3,13 @@
 import PageHeader from '@/components/common/PageHeader';
 import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
+
+// Leaflet touches window; load client-side only.
+const MapView = dynamic(() => import('@/components/common/MapView'), {
+  ssr: false,
+  loading: () => <div className="h-[450px] w-full bg-slate-100 animate-pulse" />,
+});
 
 export default function ContactPage() {
   const [formStatus, setFormStatus] = useState('');
@@ -181,14 +188,11 @@ export default function ContactPage() {
 
       {/* Map Section */}
       <section className="h-[450px]">
-        <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.7575349598903!2d32.6167!3d0.3167!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x177dbb8080000001%3A0x7d0a40269ed13e49!2sBugolobi%2C%20Kampala%2C%20Uganda!5e0!3m2!1sen!2sus!4v1636550000000!5m2!1sen!2sus" 
-          width="100%" 
-          height="450" 
-          style={{ border: 0 }} 
-          allowFullScreen 
-          loading="lazy" 
-          referrerPolicy="no-referrer-when-downgrade"
+        <MapView
+          center={[0.3176, 32.6133]}
+          zoom={15}
+          markers={[{ lat: 0.3176, lng: 32.6133, label: 'Afridrop Solutions — Bugolobi, Kampala' }]}
+          className="h-[450px] w-full"
         />
       </section>
     </main>
