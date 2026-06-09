@@ -30,6 +30,10 @@ export default async function ClientDetailPage({
     ? await db.query.users.findFirst({ where: eq(users.id, client.assignedManagerId) })
     : null;
 
+  const linkedUser = client.userId
+    ? await db.query.users.findFirst({ where: eq(users.id, client.userId) })
+    : null;
+
   // Linked portal account history (only when a user account is attached).
   const linkedOrders = client.userId
     ? await db.select().from(orders).where(and(eq(orders.userId, client.userId), isNull(orders.deletedAt))).orderBy(desc(orders.createdAt))
@@ -84,8 +88,11 @@ export default async function ClientDetailPage({
         {/* Meta */}
         <div className="bg-white rounded-xl border p-6 shadow-sm space-y-4">
           <h3 className="text-lg font-semibold">Account</h3>
-          {client.userId ? (
-            <p className="text-sm text-green-700 bg-green-50 rounded-lg px-3 py-2">Linked to a portal account</p>
+          {linkedUser ? (
+            <div className="text-sm text-green-700 bg-green-50 rounded-lg px-3 py-2">
+              <p className="font-medium">{linkedUser.firstName} {linkedUser.lastName}</p>
+              <p className="text-green-600">{linkedUser.email}</p>
+            </div>
           ) : (
             <p className="text-sm text-gray-500 bg-gray-50 rounded-lg px-3 py-2">No portal account linked</p>
           )}

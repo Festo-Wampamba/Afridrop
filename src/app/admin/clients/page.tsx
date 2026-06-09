@@ -43,6 +43,7 @@ async function createClient(formData: FormData) {
     status: (formData.get('status') as string) || 'lead',
     notes: (formData.get('notes') as string) || null,
     assignedManagerId: (formData.get('assignedManagerId') as string) || null,
+    userId: (formData.get('userId') as string) || null,
     createdBy: session.user.id,
   });
 
@@ -69,6 +70,7 @@ async function updateClient(formData: FormData) {
     status: (formData.get('status') as string) || 'lead',
     notes: (formData.get('notes') as string) || null,
     assignedManagerId: (formData.get('assignedManagerId') as string) || null,
+    userId: (formData.get('userId') as string) || null,
     updatedAt: new Date(),
   }).where(eq(clients.id, id));
 
@@ -109,6 +111,12 @@ export default async function ClientsPage({
     .from(users)
     .where(and(isNull(users.deletedAt), inArray(users.role, MANAGER_ROLES)));
   const managerName = new Map(managers.map((m) => [m.id, `${m.firstName} ${m.lastName}`]));
+
+  // Customer-role users that can be linked as the client's portal account.
+  const portalUsers = await db
+    .select({ id: users.id, firstName: users.firstName, lastName: users.lastName, email: users.email })
+    .from(users)
+    .where(and(isNull(users.deletedAt), eq(users.role, 'customer')));
 
   const editClient = params.edit ? allClients.find((c) => c.id === params.edit) : null;
   const showForm = showCreate || !!editClient;
@@ -174,6 +182,14 @@ export default async function ClientsPage({
                   <option value="">Unassigned</option>
                   {managers.map((m) => <option key={m.id} value={m.id}>{m.firstName} {m.lastName}</option>)}
                 </select>
+              </div>
+              <div className="md:col-span-2">
+                <label htmlFor="userId" className="block text-sm font-medium text-gray-700 mb-1">Portal Account</label>
+                <select id="userId" name="userId" defaultValue={editClient?.userId ?? ''} className="w-full px-3 py-2 border rounded-lg text-sm">
+                  <option value="">No portal account</option>
+                  {portalUsers.map((u) => <option key={u.id} value={u.id}>{u.firstName} {u.lastName} ({u.email})</option>)}
+                </select>
+                <p className="text-xs text-gray-500 mt-1">Links this client to a customer login so orders, quotes &amp; payments appear on the detail page.</p>
               </div>
               <div className="md:col-span-2">
                 <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Address</label>
