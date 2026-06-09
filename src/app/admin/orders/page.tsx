@@ -2,13 +2,11 @@ import { db } from '@/db';
 import { orders } from '@/db/schema';
 import { eq, desc, isNull } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
-import { auth } from '@/lib/auth';
-import Link from 'next/link';
+import { requireRole } from '@/lib/auth';
 
 async function updateOrderStatus(formData: FormData) {
   'use server';
-  const session = await auth();
-  if (!session) throw new Error('Unauthorized');
+  await requireRole();
 
   const id = formData.get('id') as string;
   const status = formData.get('status') as string;
@@ -19,8 +17,7 @@ async function updateOrderStatus(formData: FormData) {
 
 async function updatePaymentStatus(formData: FormData) {
   'use server';
-  const session = await auth();
-  if (!session) throw new Error('Unauthorized');
+  await requireRole();
 
   const id = formData.get('id') as string;
   const paymentStatus = formData.get('paymentStatus') as string;
@@ -31,8 +28,7 @@ async function updatePaymentStatus(formData: FormData) {
 
 async function deleteOrder(formData: FormData) {
   'use server';
-  const session = await auth();
-  if (!session || session.user.role !== 'super_admin') throw new Error('Unauthorized');
+  await requireRole(['super_admin']);
 
   const id = formData.get('id') as string;
   await db.update(orders).set({ deletedAt: new Date() }).where(eq(orders.id, id));
@@ -45,22 +41,6 @@ export default async function OrdersPage() {
     with: { user: true, items: true },
     orderBy: desc(orders.createdAt),
   });
-
-  const statusColors: Record<string, string> = {
-    pending: 'bg-yellow-100 text-yellow-800',
-    processing: 'bg-blue-100 text-blue-800',
-    shipped: 'bg-indigo-100 text-indigo-800',
-    delivered: 'bg-green-100 text-green-800',
-    cancelled: 'bg-red-100 text-red-800',
-    refunded: 'bg-gray-100 text-gray-800',
-  };
-
-  const paymentColors: Record<string, string> = {
-    pending: 'bg-yellow-100 text-yellow-800',
-    paid: 'bg-green-100 text-green-800',
-    failed: 'bg-red-100 text-red-800',
-    refunded: 'bg-gray-100 text-gray-800',
-  };
 
   return (
     <div className="space-y-6">
@@ -110,6 +90,7 @@ export default async function OrdersPage() {
                     <input type="hidden" name="id" value={order.id} />
                     <select
                       name="status"
+                      aria-label="Order status"
                       defaultValue={order.status ?? 'pending'}
                       className="text-xs border rounded px-2 py-1"
                     >
@@ -125,6 +106,7 @@ export default async function OrdersPage() {
                     <input type="hidden" name="id" value={order.id} />
                     <select
                       name="paymentStatus"
+                      aria-label="Payment status"
                       defaultValue={order.paymentStatus ?? 'pending'}
                       className="text-xs border rounded px-2 py-1"
                     >
