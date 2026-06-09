@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, react/no-unescaped-entities -- TODO(phase 4/5): mock UI, rebuilt with real data + types */
 'use client';
 
 import { useState } from 'react';
