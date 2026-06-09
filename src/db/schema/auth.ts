@@ -1,80 +1,81 @@
-import { pgTable, uuid, varchar, boolean, timestamp, text, inet } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, boolean, timestamp, text } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
-// Users Table
+// ─────────────────────────────────────────────────────────────
+// Better Auth tables. IDs stay uuid (generateId:false in the auth
+// config) so every existing FK referencing users.id keeps working.
+// Drizzle property names are camelCase to match Better Auth's field
+// names; DB columns are snake_case.
+// ─────────────────────────────────────────────────────────────
+
 export const users = pgTable('users', {
   id: uuid('id').defaultRandom().primaryKey(),
+
+  // Better Auth core
+  name: varchar('name', { length: 255 }).notNull(),
   email: varchar('email', { length: 255 }).notNull().unique(),
-  passwordHash: varchar('password_hash', { length: 255 }).notNull(),
+  emailVerified: boolean('email_verified').default(false).notNull(),
+  image: text('image'),
+
+  // admin plugin
+  role: varchar('role', { length: 50 }).default('customer').notNull(),
+  banned: boolean('banned').default(false),
+  banReason: text('ban_reason'),
+  banExpires: timestamp('ban_expires', { withTimezone: true }),
+
+  // app-specific additional fields
   firstName: varchar('first_name', { length: 100 }).notNull(),
   lastName: varchar('last_name', { length: 100 }).notNull(),
   phone: varchar('phone', { length: 20 }),
-  avatarUrl: text('avatar_url'),
-  emailVerified: boolean('email_verified').default(false),
-  isActive: boolean('is_active').default(true),
+  isActive: boolean('is_active').default(true).notNull(),
   lastLoginAt: timestamp('last_login_at', { withTimezone: true }),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
   deletedAt: timestamp('deleted_at', { withTimezone: true }),
 });
 
-// Roles Table
-export const roles = pgTable('roles', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  name: varchar('name', { length: 50 }).notNull().unique(),
-  description: text('description'),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
-});
-
-// Permissions Table
-export const permissions = pgTable('permissions', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  name: varchar('name', { length: 100 }).notNull().unique(),
-  resource: varchar('resource', { length: 50 }).notNull(),
-  action: varchar('action', { length: 20 }).notNull(),
-  description: text('description'),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
-});
-
-// Roles-Users Junction Table
-export const rolesUsers = pgTable('roles_users', {
-  roleId: uuid('role_id').notNull().references(() => roles.id, { onDelete: 'cascade' }),
-  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  assignedAt: timestamp('assigned_at', { withTimezone: true }).defaultNow(),
-  assignedBy: uuid('assigned_by').references(() => users.id),
-});
-
-// Permissions-Roles Junction Table
-export const permissionsRoles = pgTable('permissions_roles', {
-  permissionId: uuid('permission_id').notNull().references(() => permissions.id, { onDelete: 'cascade' }),
-  roleId: uuid('role_id').notNull().references(() => roles.id, { onDelete: 'cascade' }),
-  grantedAt: timestamp('granted_at', { withTimezone: true }).defaultNow(),
-});
-
-// Sessions Table
 export const sessions = pgTable('sessions', {
   id: uuid('id').defaultRandom().primaryKey(),
-  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  tokenHash: varchar('token_hash', { length: 255 }).notNull(),
-  ipAddress: inet('ip_address'),
-  userAgent: text('user_agent'),
   expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  token: varchar('token', { length: 255 }).notNull().unique(),
+  ipAddress: text('ip_address'),
+  userAgent: text('user_agent'),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  impersonatedBy: uuid('impersonated_by'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const accounts = pgTable('accounts', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  accountId: text('account_id').notNull(),
+  providerId: text('provider_id').notNull(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  accessToken: text('access_token'),
+  refreshToken: text('refresh_token'),
+  idToken: text('id_token'),
+  accessTokenExpiresAt: timestamp('access_token_expires_at', { withTimezone: true }),
+  refreshTokenExpiresAt: timestamp('refresh_token_expires_at', { withTimezone: true }),
+  scope: text('scope'),
+  password: text('password'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const verifications = pgTable('verifications', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  identifier: text('identifier').notNull(),
+  value: text('value').notNull(),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
-  rolesUsers: many(rolesUsers),
-}));
-
-export const rolesRelations = relations(roles, ({ many }) => ({
-  rolesUsers: many(rolesUsers),
-  permissionsRoles: many(permissionsRoles),
-}));
-
-export const permissionsRelations = relations(permissions, ({ many }) => ({
-  permissionsRoles: many(permissionsRoles),
+  accounts: many(accounts),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -84,24 +85,9 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
   }),
 }));
 
-export const rolesUsersRelations = relations(rolesUsers, ({ one }) => ({
-  role: one(roles, {
-    fields: [rolesUsers.roleId],
-    references: [roles.id],
-  }),
+export const accountsRelations = relations(accounts, ({ one }) => ({
   user: one(users, {
-    fields: [rolesUsers.userId],
+    fields: [accounts.userId],
     references: [users.id],
-  }),
-}));
-
-export const permissionsRolesRelations = relations(permissionsRoles, ({ one }) => ({
-  permission: one(permissions, {
-    fields: [permissionsRoles.permissionId],
-    references: [permissions.id],
-  }),
-  role: one(roles, {
-    fields: [permissionsRoles.roleId],
-    references: [roles.id],
   }),
 }));
