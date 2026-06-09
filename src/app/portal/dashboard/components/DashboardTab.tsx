@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars -- TODO(phase 4/5): mock UI, rebuilt with real data + types */
 'use client';
 
 import { useEffect, useState } from 'react';
