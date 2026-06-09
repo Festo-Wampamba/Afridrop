@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- TODO(phase 4/5): mock UI, rebuilt with real data + types */
 'use client';
 
 import { Bell } from 'lucide-react';
