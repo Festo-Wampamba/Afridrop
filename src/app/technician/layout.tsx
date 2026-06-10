@@ -5,7 +5,7 @@ import { auth, getSession } from '@/lib/auth';
 import { homeForRole } from '@/lib/roles';
 import { LogOut, Globe } from 'lucide-react';
 
-export default async function AttendantLayout({
+export default async function TechnicianLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -16,18 +16,18 @@ export default async function AttendantLayout({
   }
 
   const role = (session.user as { role?: string }).role;
-  if (role !== 'attendant') {
+  if (role !== 'technician') {
     redirect(homeForRole(role));
   }
 
-  const initial = session.user.name?.[0]?.toUpperCase() ?? 'A';
+  const initial = session.user.name?.[0]?.toUpperCase() ?? 'T';
 
   return (
     <div className="min-h-dvh bg-slate-50">
       <header className="bg-[#00477A] text-white">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between gap-4">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-[#B6E9F4]">Attendant Dashboard</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-[#B6E9F4]">Technician Dashboard</p>
             <h1 className="text-xl font-bold mt-0.5">{session.user.name}</h1>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">

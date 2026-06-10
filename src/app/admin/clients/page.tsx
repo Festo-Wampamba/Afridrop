@@ -14,7 +14,7 @@ function toCoord(value: FormDataEntryValue | null): number | null {
 
 const POOL_TYPES = ['concrete', 'fiberglass', 'vinyl', 'other'];
 const STATUSES = ['lead', 'active', 'inactive'];
-const MANAGER_ROLES = ['manager', 'admin', 'super_admin'];
+const MANAGER_ROLES = ['manager', 'super_admin'];
 
 const statusColors: Record<string, string> = {
   lead: 'bg-yellow-100 text-yellow-800',

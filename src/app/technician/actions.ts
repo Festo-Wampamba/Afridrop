@@ -5,9 +5,9 @@ import { quotations } from '@/db/schema/quotations';
 import { and, desc, eq, isNull } from 'drizzle-orm';
 import { requireRole } from '@/lib/auth';
 
-// Jobs assigned to this attendant (quotations.assignedTo).
-export async function getAttendantData() {
-  const session = await requireRole(['attendant']);
+// Jobs assigned to this technician (quotations.assignedTo).
+export async function getTechnicianData() {
+  const session = await requireRole(['technician']);
 
   const jobs = await db
     .select()

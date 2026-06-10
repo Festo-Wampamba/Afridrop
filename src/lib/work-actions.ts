@@ -9,7 +9,7 @@ import { revalidatePath } from 'next/cache';
 import { requireRole } from '@/lib/auth';
 import { scopedCustomerIds, JOB_STATUSES, type JobStatus } from '@/lib/work';
 
-const WORK_ROLES = ['manager', 'admin', 'super_admin'];
+const WORK_ROLES = ['manager', 'super_admin'];
 
 function revalidate(formData: FormData) {
   const path = (formData.get('_path') as string) || '/manager';

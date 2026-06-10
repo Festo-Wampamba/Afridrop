@@ -5,7 +5,7 @@ import { clients } from '@/db/schema/clients';
 import { quotations } from '@/db/schema/quotations';
 import { and, desc, eq, inArray, isNull } from 'drizzle-orm';
 import { requireRole } from '@/lib/auth';
-import { scopedCustomerIds, getJobs, getActiveAttendants, getThreads } from '@/lib/work';
+import { scopedCustomerIds, getJobs, getActiveTechnicians, getThreads } from '@/lib/work';
 
 // ── Overview ──────────────────────────────────────────────────────────────
 export async function getManagerData() {
@@ -54,16 +54,16 @@ export async function getManagerClients() {
 export async function getManagerJobsView() {
   const session = await requireRole(['manager']);
   const scope = await scopedCustomerIds(session);
-  const [jobs, attendants] = await Promise.all([getJobs(scope), getActiveAttendants()]);
+  const [jobs, attendants] = await Promise.all([getJobs(scope), getActiveTechnicians()]);
   const clientNameByUserId = await clientNameMap(session.user.id);
   return { jobs, attendants, clientNameByUserId };
 }
 
-// ── Team (attendants + progress) ───────────────────────────────────────────
+// ── Team (technicians + progress) ─────────────────────────────────────────
 export async function getManagerTeam() {
   const session = await requireRole(['manager']);
   const scope = await scopedCustomerIds(session);
-  const [attendants, jobs] = await Promise.all([getActiveAttendants(), getJobs(scope)]);
+  const [attendants, jobs] = await Promise.all([getActiveTechnicians(), getJobs(scope)]);
 
   return attendants.map((a) => {
     const theirs = jobs.filter((r) => r.job.assignedTo === a.id);

@@ -6,7 +6,7 @@ import Footer from '../common/Footer';
 
 // Authenticated/app areas render their own chrome — never the marketing
 // header/footer (which otherwise overlaps dashboard content).
-const APP_PREFIXES = ['/admin', '/manager', '/attendant', '/portal', '/auth'];
+const APP_PREFIXES = ['/admin', '/manager', '/technician', '/director', '/sales', '/accounts', '/reception', '/portal', '/auth'];
 
 export default function ClientLayout({
   children,

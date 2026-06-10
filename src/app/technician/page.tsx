@@ -1,5 +1,5 @@
 import { Clock, CheckCircle2, MapPin } from 'lucide-react';
-import { getAttendantData } from './actions';
+import { getTechnicianData } from './actions';
 
 const statusColors: Record<string, string> = {
   pending: 'bg-amber-100 text-amber-800',
@@ -8,8 +8,8 @@ const statusColors: Record<string, string> = {
   cancelled: 'bg-gray-100 text-gray-600',
 };
 
-export default async function AttendantDashboardPage() {
-  const { jobs, stats } = await getAttendantData();
+export default async function TechnicianDashboardPage() {
+  const { jobs, stats } = await getTechnicianData();
 
   return (
     <div className="space-y-8">

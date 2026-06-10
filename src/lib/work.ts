@@ -19,7 +19,7 @@ export const JOB_STATUS_COLORS: Record<string, string> = {
   cancelled: 'bg-gray-100 text-gray-600',
 };
 
-type Role = 'super_admin' | 'admin' | 'manager' | 'attendant' | 'customer';
+type Role = 'super_admin' | 'director' | 'manager' | 'sales_manager' | 'accountant' | 'receptionist' | 'technician' | 'customer';
 
 function roleOf(session: Session): Role {
   return (session.user as { role?: Role }).role ?? 'customer';
@@ -29,7 +29,7 @@ function roleOf(session: Session): Role {
 // clients). Admin/super_admin return null = full access (no scope filter).
 export async function scopedCustomerIds(session: Session): Promise<string[] | null> {
   const role = roleOf(session);
-  if (role === 'admin' || role === 'super_admin') return null;
+  if (role === 'super_admin') return null;
 
   const rows = await db
     .select({ userId: clients.userId })
@@ -39,11 +39,11 @@ export async function scopedCustomerIds(session: Session): Promise<string[] | nu
   return rows.map((r) => r.userId).filter((id): id is string => Boolean(id));
 }
 
-export async function getActiveAttendants() {
+export async function getActiveTechnicians() {
   return db
     .select({ id: users.id, firstName: users.firstName, lastName: users.lastName, email: users.email })
     .from(users)
-    .where(and(eq(users.role, 'attendant'), isNull(users.deletedAt)));
+    .where(and(eq(users.role, 'technician'), isNull(users.deletedAt)));
 }
 
 // Jobs visible to the current scope, with the assignee joined in.

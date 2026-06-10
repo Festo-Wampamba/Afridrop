@@ -4,11 +4,18 @@ export function homeForRole(role?: string | null): string {
   switch (role) {
     case 'customer':
       return '/portal';
-    case 'attendant':
-      return '/attendant';
+    case 'technician':
+      return '/technician';
     case 'manager':
       return '/manager';
-    case 'admin':
+    case 'sales_manager':
+      return '/sales';
+    case 'accountant':
+      return '/accounts';
+    case 'receptionist':
+      return '/reception';
+    case 'director':
+      return '/director';
     case 'super_admin':
       return '/admin';
     default:
