@@ -3,6 +3,7 @@ import { LayoutDashboard, ShoppingBag, Package, FolderKanban, FileText, Settings
 import { auth, getSession } from "@/lib/auth"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
+import { homeForRole } from "@/lib/roles"
 
 export default async function AdminLayout({
   children,
@@ -17,7 +18,7 @@ export default async function AdminLayout({
 
   // Check role
   if (session.user.role !== 'super_admin') {
-    redirect("/")
+    redirect(homeForRole(session.user.role))
   }
 
   return (
