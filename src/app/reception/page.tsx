@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { Search } from 'lucide-react';
 import { ComingSoon } from '@/components/dashboard/ComingSoon';
 import { getTechnicianAvailability, getRecentInquiries } from './actions';

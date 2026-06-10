@@ -89,11 +89,12 @@ export async function getContactDirectory(query?: string) {
   await requireRole(['receptionist', 'super_admin']);
 
   const q = query?.trim();
+  const escaped = q ? q.replace(/[\\%_]/g, (m) => '\\' + m) : undefined;
 
-  const where = q
+  const where = escaped
     ? and(
         isNull(clients.deletedAt),
-        or(ilike(clients.name, `%${q}%`), ilike(clients.phone, `%${q}%`)),
+        or(ilike(clients.name, `%${escaped}%`), ilike(clients.phone, `%${escaped}%`)),
       )
     : isNull(clients.deletedAt);
 

@@ -4,15 +4,15 @@ import { db } from '@/db';
 import { clients } from '@/db/schema/clients';
 import { eq, and, isNull } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { requireRole } from '@/lib/auth';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const MAX_LEN = 200;
 
-function trimCap(val: FormDataEntryValue | null): string | undefined {
+function trimCap(val: FormDataEntryValue | null, max = 200): string | undefined {
   if (!val) return undefined;
   const s = String(val).trim();
-  return s.length > 0 ? s.slice(0, MAX_LEN) : undefined;
+  return s.length > 0 ? s.slice(0, max) : undefined;
 }
 
 // Receptionist may only update contact fields: phone, email, address, city.
@@ -23,10 +23,10 @@ export async function updateClientContact(formData: FormData) {
   const clientId = formData.get('clientId') as string;
   if (!clientId || !UUID_RE.test(clientId)) throw new Error('Invalid client id');
 
-  const phone = trimCap(formData.get('phone'));
-  const email = trimCap(formData.get('email'));
-  const address = trimCap(formData.get('address'));
-  const city = trimCap(formData.get('city'));
+  const phone = trimCap(formData.get('phone'), 30);
+  const email = trimCap(formData.get('email'), 255);
+  const address = trimCap(formData.get('address'), 200);
+  const city = trimCap(formData.get('city'), 100);
 
   const updated = await db
     .update(clients)
@@ -45,4 +45,5 @@ export async function updateClientContact(formData: FormData) {
   }
 
   revalidatePath('/reception/contacts');
+  redirect('/reception/contacts');
 }
