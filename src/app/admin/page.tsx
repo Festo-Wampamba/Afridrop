@@ -1,6 +1,6 @@
 import { db } from '@/db';
 import { users, sessions, auditLogs } from '@/db/schema';
-import { count, eq, gt, isNull } from 'drizzle-orm';
+import { and, count, eq, gt, isNull } from 'drizzle-orm';
 import { requireRole } from '@/lib/auth';
 import Link from 'next/link';
 import { Users, Monitor, Database, UserPlus, KeyRound, Shield } from 'lucide-react';
@@ -12,21 +12,14 @@ export default async function AdminOverview() {
 
   const now = new Date();
 
-  // DB health: trivial query
-  let dbHealthy = true;
-  try {
-    await db.select({ value: count() }).from(users).limit(1);
-  } catch {
-    dbHealthy = false;
-  }
-
   const [
     [activeUsersRow],
     [liveSessionsRow],
     roleRows,
     recentLogs,
+    dbHealthy,
   ] = await Promise.all([
-    db.select({ value: count() }).from(users).where(eq(users.isActive, true)),
+    db.select({ value: count() }).from(users).where(and(eq(users.isActive, true), isNull(users.deletedAt))),
     db.select({ value: count() }).from(sessions).where(gt(sessions.expiresAt, now)),
     // Count users grouped by role (exclude super_admin)
     db
@@ -40,6 +33,7 @@ export default async function AdminOverview() {
       limit: 8,
       with: { user: { columns: { firstName: true, lastName: true, email: true } } },
     }),
+    db.select({ value: count() }).from(users).limit(1).then(() => true).catch(() => false),
   ]);
 
   const roleData = roleRows
@@ -176,7 +170,11 @@ export default async function AdminOverview() {
                 {recentLogs.map((log) => (
                   <tr key={log.id} className="hover:bg-gray-50">
                     <td className="px-6 py-3 text-sm text-gray-700">
-                      {log.user ? `${log.user.firstName} ${log.user.lastName}` : log.userId ?? '—'}
+                      {log.user
+                        ? `${log.user.firstName} ${log.user.lastName}`
+                        : log.userId
+                          ? <span className="font-mono text-xs text-gray-400">{log.userId.slice(0, 8)}…</span>
+                          : '—'}
                     </td>
                     <td className="px-6 py-3">
                       <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700">

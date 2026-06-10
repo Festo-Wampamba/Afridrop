@@ -36,8 +36,8 @@ export function RoleBarChart({ data }: { data: { role: string; count: number }[]
           cursor={{ fill: '#f3f4f6' }}
         />
         <Bar dataKey="count" name="Users" radius={[4, 4, 0, 0]}>
-          {chartData.map((_, i) => (
-            <Cell key={i} fill={i % 2 === 0 ? '#009FCE' : '#00477A'} />
+          {chartData.map((entry, i) => (
+            <Cell key={entry.name} fill={i % 2 === 0 ? '#009FCE' : '#00477A'} />
           ))}
         </Bar>
       </BarChart>

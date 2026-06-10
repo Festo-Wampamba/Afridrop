@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { LayoutDashboard, ShoppingBag, Package, FolderKanban, FileText, Settings, Users, Contact, ArrowLeft, ClipboardList, MessagesSquare, Globe, ScrollText, ShieldCheck } from "lucide-react"
+import { LayoutDashboard, ShoppingBag, Package, FolderKanban, FileText, Settings, Contact, ArrowLeft, ClipboardList, MessagesSquare, Globe, ScrollText, ShieldCheck } from "lucide-react"
 import { auth, getSession } from "@/lib/auth"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
