@@ -27,8 +27,10 @@ export default async function TechnicianLayout({
       <header className="bg-[#00477A] text-white">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between gap-4">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-[#B6E9F4]">Technician Dashboard</p>
-            <h1 className="text-xl font-bold mt-0.5">{session.user.name}</h1>
+            <p className="text-xs font-medium uppercase tracking-wide text-[#B6E9F4]">Technician</p>
+            <h1 className="text-xl font-bold mt-0.5">
+              {session.user.name?.split(' ')[0] ?? session.user.name}
+            </h1>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <Link
@@ -59,7 +61,7 @@ export default async function TechnicianLayout({
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8">{children}</main>
+      <main className="mx-auto max-w-md px-4 py-6 md:max-w-xl">{children}</main>
     </div>
   );
 }
