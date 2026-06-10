@@ -47,8 +47,9 @@ export async function getMyJobs() {
 export async function getMyCompletedToday() {
   const session = await requireRole(['technician']);
 
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
+  const todayStart = new Date(
+    new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Kampala' }).format(new Date()) + 'T00:00:00+03:00'
+  );
 
   return db
     .select(SAFE_COLS)

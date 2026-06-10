@@ -1,6 +1,7 @@
 import { getPendingApprovals } from '../actions';
 import { approveQuotation, rejectQuotation } from '../approval-actions';
-import { CheckCircle, XCircle, Inbox } from 'lucide-react';
+import { Inbox } from 'lucide-react';
+import { SubmitButton } from '@/components/dashboard/SubmitButton';
 
 function fmtUGX(amount: number | null) {
   if (amount === null) return '—';
@@ -68,23 +69,19 @@ export default async function ApprovalsPage() {
                   <div className="flex gap-2">
                     <form action={approveQuotation}>
                       <input type="hidden" name="quotationId" value={q.id} />
-                      <button
-                        type="submit"
-                        className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500/50"
-                      >
-                        <CheckCircle size={15} />
-                        Approve
-                      </button>
+                      <SubmitButton
+                        label="Approve"
+                        pendingLabel="Approving…"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500/50 disabled:opacity-60"
+                      />
                     </form>
                     <form action={rejectQuotation}>
                       <input type="hidden" name="quotationId" value={q.id} />
-                      <button
-                        type="submit"
-                        className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-white border border-red-300 text-red-600 hover:bg-red-50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500/50"
-                      >
-                        <XCircle size={15} />
-                        Reject
-                      </button>
+                      <SubmitButton
+                        label="Reject"
+                        pendingLabel="Rejecting…"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-white border border-red-300 text-red-600 hover:bg-red-50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500/50 disabled:opacity-60"
+                      />
                     </form>
                   </div>
                 </div>

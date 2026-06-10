@@ -1,9 +1,10 @@
 import { MapPin, Phone, Wrench, CheckCircle2, Clock } from 'lucide-react';
 import { getMyJobs, getMyCompletedToday, updateMyJobStatus } from './actions';
 import { JOB_STATUS_COLORS } from '@/lib/work';
+import { SubmitButton } from '@/components/dashboard/SubmitButton';
 
 function todayLabel() {
-  return new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  return new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'Africa/Kampala' });
 }
 
 export default async function TechnicianPage() {
@@ -90,22 +91,19 @@ export default async function TechnicianPage() {
                   )}
 
                   {/* Action button */}
-                  {(job.status === 'assigned' || job.status === 'in_progress') && (
-                    <form action={updateMyJobStatus}>
-                      <input type="hidden" name="jobId" value={job.id} />
-                      <input type="hidden" name="currentStatus" value={job.status ?? ''} />
-                      <button
-                        type="submit"
-                        className={`w-full h-12 rounded-xl text-white font-semibold text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                          isInProgress
-                            ? 'bg-teal-600 hover:bg-teal-700 focus:ring-teal-500'
-                            : 'bg-[#009FCE] hover:bg-[#007baa] focus:ring-[#009FCE]'
-                        }`}
-                      >
-                        {isInProgress ? 'Mark Complete' : 'Start Job'}
-                      </button>
-                    </form>
-                  )}
+                  <form action={updateMyJobStatus}>
+                    <input type="hidden" name="jobId" value={job.id} />
+                    <input type="hidden" name="currentStatus" value={job.status ?? ''} />
+                    <SubmitButton
+                      label={isInProgress ? 'Mark Complete' : 'Start Job'}
+                      pendingLabel="Working…"
+                      className={`w-full h-12 rounded-xl text-white font-semibold text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-60 ${
+                        isInProgress
+                          ? 'bg-teal-600 hover:bg-teal-700 focus:ring-teal-500'
+                          : 'bg-[#009FCE] hover:bg-[#007baa] focus:ring-[#009FCE]'
+                      }`}
+                    />
+                  </form>
                 </div>
               </li>
             );
