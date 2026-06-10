@@ -2,7 +2,7 @@
 
 import { db } from '@/db';
 import { clients } from '@/db/schema/clients';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, isNull } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { requireRole } from '@/lib/auth';
 
@@ -25,7 +25,7 @@ export async function updateLeadStatus(formData: FormData) {
   const updated = await db
     .update(clients)
     .set({ status: newStatus, updatedAt: new Date() })
-    .where(and(eq(clients.id, leadId), eq(clients.status, 'lead')))
+    .where(and(eq(clients.id, leadId), eq(clients.status, 'lead'), isNull(clients.deletedAt)))
     .returning({ id: clients.id });
 
   if (updated.length === 0) {

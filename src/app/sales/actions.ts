@@ -66,6 +66,7 @@ export async function getSalesOverview() {
   const rejected = byStatus['rejected'] ?? 0;
   const converted = byStatus['converted'] ?? 0;
   const total = pending + reviewed + approved + rejected + converted;
+  // Denominator: approval-workflow statuses only — intentionally excludes job-lifecycle rows (director reports use all quotations)
   const conversionRate = total > 0 ? Math.round(((approved + converted) / total) * 100) : 0;
 
   return {
@@ -114,7 +115,7 @@ export async function getRecentQuotations() {
       createdAt: quotations.createdAt,
     })
     .from(quotations)
-    .where(isNull(quotations.deletedAt))
+    .where(and(isNull(quotations.deletedAt), inArray(quotations.status as any, [...APPROVAL_STATUSES])))
     .orderBy(desc(quotations.createdAt))
     .limit(10);
 
