@@ -1,124 +1,198 @@
 import { db } from '@/db';
-import { users, orders, products, blogPosts, projects } from '@/db/schema';
-import { count, isNull, eq } from 'drizzle-orm';
-import { getSession } from '@/lib/auth';
+import { users, sessions, auditLogs } from '@/db/schema';
+import { count, eq, gt, isNull } from 'drizzle-orm';
+import { requireRole } from '@/lib/auth';
 import Link from 'next/link';
-import { Users, ShoppingBag, Package, FileText, FolderKanban, DollarSign } from 'lucide-react';
+import { Users, Monitor, Database, UserPlus, KeyRound, Shield } from 'lucide-react';
+import { RoleBarChart } from '@/components/admin/RoleBarChart';
+import { format } from 'date-fns';
 
-export default async function AdminDashboard() {
-  const session = await getSession();
+export default async function AdminOverview() {
+  await requireRole(['super_admin']);
 
-  // Run all stat queries in parallel for faster load
+  const now = new Date();
+
+  // DB health: trivial query
+  let dbHealthy = true;
+  try {
+    await db.select({ value: count() }).from(users).limit(1);
+  } catch {
+    dbHealthy = false;
+  }
+
   const [
-    [userCount],
-    [orderCount],
-    [productCount],
-    [postCount],
-    [projectCount],
-    [pendingOrders],
-    recentUsers,
+    [activeUsersRow],
+    [liveSessionsRow],
+    roleRows,
+    recentLogs,
   ] = await Promise.all([
-    db.select({ value: count() }).from(users).where(isNull(users.deletedAt)),
-    db.select({ value: count() }).from(orders).where(isNull(orders.deletedAt)),
-    db.select({ value: count() }).from(products).where(isNull(products.deletedAt)),
-    db.select({ value: count() }).from(blogPosts).where(isNull(blogPosts.deletedAt)),
-    db.select({ value: count() }).from(projects).where(isNull(projects.deletedAt)),
-    db.select({ value: count() }).from(orders).where(eq(orders.status, 'pending')),
-    db.query.users.findMany({
-      where: isNull(users.deletedAt),
-      orderBy: (users, { desc }) => [desc(users.createdAt)],
-      limit: 5,
+    db.select({ value: count() }).from(users).where(eq(users.isActive, true)),
+    db.select({ value: count() }).from(sessions).where(gt(sessions.expiresAt, now)),
+    // Count users grouped by role (exclude super_admin)
+    db
+      .select({ role: users.role, value: count() })
+      .from(users)
+      .where(isNull(users.deletedAt))
+      .groupBy(users.role),
+    // Latest 8 audit log rows with optional user join
+    db.query.auditLogs.findMany({
+      orderBy: (t, { desc }) => [desc(t.createdAt)],
+      limit: 8,
+      with: { user: { columns: { firstName: true, lastName: true, email: true } } },
     }),
   ]);
 
+  const roleData = roleRows
+    .filter((r) => r.role !== 'super_admin')
+    .map((r) => ({ role: r.role ?? 'unknown', count: Number(r.value) }))
+    .sort((a, b) => b.count - a.count);
+
   const stats = [
-    { label: 'Total Users', value: userCount.value, icon: Users, href: '/admin/users', color: 'bg-blue-500' },
-    { label: 'Orders', value: orderCount.value, icon: ShoppingBag, href: '/admin/orders', color: 'bg-green-500' },
-    { label: 'Products', value: productCount.value, icon: Package, href: '/admin/products', color: 'bg-purple-500' },
-    { label: 'Blog Posts', value: postCount.value, icon: FileText, href: '/admin/blog', color: 'bg-orange-500' },
-    { label: 'Projects', value: projectCount.value, icon: FolderKanban, href: '/admin/projects', color: 'bg-indigo-500' },
-    { label: 'Pending Orders', value: pendingOrders.value, icon: DollarSign, href: '/admin/orders', color: 'bg-yellow-500' },
+    {
+      label: 'Active Users',
+      value: activeUsersRow.value,
+      icon: Users,
+      color: 'bg-[#009FCE]',
+      href: '/admin/users',
+    },
+    {
+      label: 'Live Sessions',
+      value: liveSessionsRow.value,
+      icon: Monitor,
+      color: 'bg-[#00477A]',
+      href: null,
+    },
+    {
+      label: 'Database',
+      value: dbHealthy ? 'Healthy' : 'Error',
+      icon: Database,
+      color: dbHealthy ? 'bg-green-500' : 'bg-red-500',
+      href: null,
+    },
   ];
 
   return (
     <div className="space-y-8">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900">
-          Welcome back, {session?.user?.name?.split(' ')[0]}! 👋
-        </h2>
-        <p className="text-gray-500 text-sm mt-1">Here&apos;s what&apos;s happening with your platform today.</p>
+      {/* Header */}
+      <div className="flex items-start justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">System Overview</h2>
+          <p className="text-gray-500 text-sm mt-1">System health &amp; user management</p>
+        </div>
+        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#009FCE]/10 text-[#00477A] border border-[#009FCE]/30">
+          Super Admin
+        </span>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {stats.map((stat) => (
-          <Link key={stat.label} href={stat.href} className="group">
+      {/* Stat cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {stats.map((stat) => {
+          const card = (
             <div className="bg-white rounded-xl border p-5 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center gap-4">
                 <div className={`${stat.color} p-3 rounded-lg text-white`}>
                   <stat.icon size={22} />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">{stat.label}</p>
-                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">{stat.label}</p>
+                  <p className="text-2xl font-bold text-gray-900 mt-0.5">{stat.value}</p>
                 </div>
               </div>
             </div>
-          </Link>
-        ))}
+          );
+          return stat.href ? (
+            <Link key={stat.label} href={stat.href} className="group">
+              {card}
+            </Link>
+          ) : (
+            <div key={stat.label}>{card}</div>
+          );
+        })}
       </div>
 
-      {/* Recent Users */}
-      <div className="bg-white rounded-xl border shadow-sm">
-        <div className="p-5 border-b flex items-center justify-between">
-          <h3 className="font-semibold text-gray-900">Recent Users</h3>
-          <Link href="/admin/users" className="text-sm text-blue-600 hover:text-blue-800">View all →</Link>
-        </div>
-        <div className="divide-y">
-          {recentUsers.map((user) => (
-            <div key={user.id} className="p-4 flex items-center justify-between hover:bg-gray-50">
-              <div className="flex items-center gap-3">
-                <div className="h-9 w-9 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold">
-                  {user.firstName[0]}{user.lastName[0]}
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">{user.firstName} {user.lastName}</p>
-                  <p className="text-xs text-gray-500">{user.email}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                  {user.role || 'No role'}
-                </span>
-                <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                  {user.isActive ? 'Active' : 'Inactive'}
-                </span>
-              </div>
-            </div>
-          ))}
-          {recentUsers.length === 0 && (
-            <div className="p-8 text-center text-gray-500 text-sm">No users yet</div>
+      {/* Middle row: Users by Role + Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Users by Role bar chart */}
+        <div className="md:col-span-2 bg-white rounded-xl border p-5 shadow-sm">
+          <h3 className="font-semibold text-gray-900 mb-4">Users by Role</h3>
+          {roleData.length === 0 ? (
+            <p className="text-sm text-gray-400 py-8 text-center">No user data yet</p>
+          ) : (
+            <RoleBarChart data={roleData} />
           )}
         </div>
+
+        {/* Quick Actions */}
+        <div className="bg-white rounded-xl border p-5 shadow-sm">
+          <h3 className="font-semibold text-gray-900 mb-4">Quick Actions</h3>
+          <div className="space-y-3">
+            <Link
+              href="/admin/users?action=create"
+              className="flex items-center gap-3 w-full px-4 py-3 bg-[#009FCE] text-white text-sm font-medium rounded-lg hover:bg-[#0089b5] transition"
+            >
+              <UserPlus size={18} />
+              Create User
+            </Link>
+            <Link
+              href="/admin/users"
+              className="flex items-center gap-3 w-full px-4 py-3 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition"
+            >
+              <KeyRound size={18} />
+              Reset Password
+            </Link>
+            <Link
+              href="/admin/users"
+              className="flex items-center gap-3 w-full px-4 py-3 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition"
+            >
+              <Shield size={18} />
+              Manage Roles
+            </Link>
+          </div>
+        </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="bg-white rounded-xl border p-5 shadow-sm">
-        <h3 className="font-semibold text-gray-900 mb-4">Quick Actions</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <Link href="/admin/users?action=create" className="flex flex-col items-center gap-2 p-4 rounded-lg border hover:bg-blue-50 hover:border-blue-200 transition">
-            <Users size={20} className="text-blue-600" /> <span className="text-xs font-medium text-gray-700">Add User</span>
-          </Link>
-          <Link href="/admin/products?action=create" className="flex flex-col items-center gap-2 p-4 rounded-lg border hover:bg-purple-50 hover:border-purple-200 transition">
-            <Package size={20} className="text-purple-600" /> <span className="text-xs font-medium text-gray-700">Add Product</span>
-          </Link>
-          <Link href="/admin/blog?action=create" className="flex flex-col items-center gap-2 p-4 rounded-lg border hover:bg-orange-50 hover:border-orange-200 transition">
-            <FileText size={20} className="text-orange-600" /> <span className="text-xs font-medium text-gray-700">New Post</span>
-          </Link>
-          <Link href="/admin/projects?action=create" className="flex flex-col items-center gap-2 p-4 rounded-lg border hover:bg-indigo-50 hover:border-indigo-200 transition">
-            <FolderKanban size={20} className="text-indigo-600" /> <span className="text-xs font-medium text-gray-700">New Project</span>
+      {/* Recent Audit Logs */}
+      <div className="bg-white rounded-xl border shadow-sm">
+        <div className="p-5 border-b flex items-center justify-between">
+          <h3 className="font-semibold text-gray-900">Recent Audit Logs</h3>
+          <Link href="/admin/audit" className="text-sm text-[#009FCE] hover:text-[#00477A]">
+            View all →
           </Link>
         </div>
+        {recentLogs.length === 0 ? (
+          <div className="p-10 text-center text-sm text-gray-400">No audit events yet</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500">User</th>
+                  <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500">Action</th>
+                  <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500">Resource</th>
+                  <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500">Time</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {recentLogs.map((log) => (
+                  <tr key={log.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-3 text-sm text-gray-700">
+                      {log.user ? `${log.user.firstName} ${log.user.lastName}` : log.userId ?? '—'}
+                    </td>
+                    <td className="px-6 py-3">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700">
+                        {log.action}
+                      </span>
+                    </td>
+                    <td className="px-6 py-3 text-sm text-gray-600">{log.resourceType}</td>
+                    <td className="px-6 py-3 text-sm text-gray-500">
+                      {log.createdAt ? format(new Date(log.createdAt), 'MMM d, HH:mm') : '—'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

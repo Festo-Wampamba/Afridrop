@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { LayoutDashboard, ShoppingBag, Package, FolderKanban, FileText, Settings, Users, Contact, ArrowLeft, ClipboardList, MessagesSquare, Globe } from "lucide-react"
+import { LayoutDashboard, ShoppingBag, Package, FolderKanban, FileText, Settings, Users, Contact, ArrowLeft, ClipboardList, MessagesSquare, Globe, ScrollText, ShieldCheck } from "lucide-react"
 import { auth, getSession } from "@/lib/auth"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
@@ -29,55 +29,54 @@ export default async function AdminLayout({
           <p className="text-xs text-gray-400 mt-1">Super Admin Dashboard</p>
         </div>
         
-        <nav className="p-4 space-y-2">
+        <nav className="p-4 space-y-1">
+          {/* System group */}
           <Link href="/admin" className="flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-800 text-white hover:bg-gray-700 transition-colors">
             <LayoutDashboard size={20} />
-            <span>Dashboard</span>
+            <span>Overview</span>
           </Link>
-          
+          <Link href="/admin/users" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+            <ShieldCheck size={20} />
+            <span>Users &amp; Roles</span>
+          </Link>
+          <Link href="/admin/audit" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+            <ScrollText size={20} />
+            <span>Audit Logs</span>
+          </Link>
+          <Link href="/admin/settings" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+            <Settings size={20} />
+            <span>System Settings</span>
+          </Link>
+
+          {/* All Data group */}
+          <p className="px-4 pt-5 pb-1 text-xs font-semibold uppercase tracking-wider text-gray-500">All Data</p>
           <Link href="/admin/clients" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
             <Contact size={20} />
             <span>Clients</span>
           </Link>
-
-          <Link href="/admin/orders" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
-            <ShoppingBag size={20} />
-            <span>Orders</span>
-          </Link>
-
           <Link href="/admin/jobs" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
             <ClipboardList size={20} />
             <span>Service Requests</span>
           </Link>
-
-          <Link href="/admin/messages" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
-            <MessagesSquare size={20} />
-            <span>Messages</span>
+          <Link href="/admin/orders" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+            <ShoppingBag size={20} />
+            <span>Orders</span>
           </Link>
-
           <Link href="/admin/products" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
             <Package size={20} />
             <span>Products</span>
           </Link>
-          
           <Link href="/admin/projects" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
             <FolderKanban size={20} />
             <span>Projects</span>
           </Link>
-          
           <Link href="/admin/blog" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
             <FileText size={20} />
             <span>Blog</span>
           </Link>
-          
-          <Link href="/admin/users" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
-            <Users size={20} />
-            <span>Users</span>
-          </Link>
-          
-          <Link href="/admin/settings" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
-            <Settings size={20} />
-            <span>Settings</span>
+          <Link href="/admin/messages" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+            <MessagesSquare size={20} />
+            <span>Messages</span>
           </Link>
         </nav>
         
