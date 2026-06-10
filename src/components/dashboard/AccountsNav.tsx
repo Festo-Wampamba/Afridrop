@@ -2,11 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, CreditCard } from 'lucide-react';
+import { LayoutDashboard, CreditCard, Users } from 'lucide-react';
 
 const ITEMS = [
   { href: '/accounts', label: 'Overview', icon: LayoutDashboard, exact: true },
   { href: '/accounts/payments', label: 'Payments', icon: CreditCard, exact: false },
+  { href: '/accounts/clients', label: 'Clients', icon: Users, exact: false },
 ];
 
 export function AccountsNav() {

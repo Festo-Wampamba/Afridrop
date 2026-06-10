@@ -1,8 +1,6 @@
 import { getPayments } from '../actions';
 import Link from 'next/link';
 
-const PAGE_SIZE = 25;
-
 function ugx(n: number) {
   return `UGX ${n.toLocaleString('en-UG')}`;
 }
@@ -31,15 +29,25 @@ function methodLabel(method: string) {
   return MAP[method] ?? method;
 }
 
+function pageHref(page: number, status: string, method: string) {
+  const params = new URLSearchParams();
+  params.set('page', String(page));
+  if (status) params.set('status', status);
+  if (method) params.set('method', method);
+  return `/accounts/payments?${params.toString()}`;
+}
+
 export default async function PaymentsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; status?: string; method?: string }>;
 }) {
   const params = await searchParams;
   const page = Math.max(1, parseInt(params.page ?? '1', 10) || 1);
+  const status = params.status ?? '';
+  const method = params.method ?? '';
 
-  const { total, totalPages, rows } = await getPayments(page);
+  const { total, totalPages, page: safePage, rows } = await getPayments(page, { status, method });
 
   return (
     <div className="space-y-6">
@@ -48,6 +56,61 @@ export default async function PaymentsPage({
         <h2 className="text-2xl font-bold text-gray-900">Payments</h2>
         <p className="text-gray-500 text-sm mt-1">{total} total payment{total !== 1 ? 's' : ''}</p>
       </div>
+
+      {/* Filter form — GET, no JS required */}
+      <form method="GET" action="/accounts/payments" className="flex flex-wrap items-end gap-3">
+        <div className="flex flex-col gap-1">
+          <label htmlFor="status-filter" className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+            Status
+          </label>
+          <select
+            id="status-filter"
+            name="status"
+            defaultValue={status}
+            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#009FCE]"
+          >
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="completed">Completed</option>
+            <option value="failed">Failed</option>
+            <option value="refunded">Refunded</option>
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="method-filter" className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+            Method
+          </label>
+          <select
+            id="method-filter"
+            name="method"
+            defaultValue={method}
+            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#009FCE]"
+          >
+            <option value="">All methods</option>
+            <option value="flutterwave_mobile">Mobile Money</option>
+            <option value="flutterwave_card">Card</option>
+            <option value="bank_transfer">Bank Transfer</option>
+            <option value="cash">Cash</option>
+          </select>
+        </div>
+
+        <button
+          type="submit"
+          className="px-4 py-2 text-sm font-medium bg-[#009FCE] text-white rounded-lg hover:bg-[#0089b3] transition"
+        >
+          Apply
+        </button>
+
+        {(status || method) && (
+          <Link
+            href="/accounts/payments"
+            className="px-4 py-2 text-sm font-medium bg-white border rounded-lg text-gray-600 hover:bg-gray-50 transition"
+          >
+            Clear
+          </Link>
+        )}
+      </form>
 
       {/* Table */}
       <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
@@ -106,24 +169,24 @@ export default async function PaymentsPage({
         )}
       </div>
 
-      {/* Pagination */}
+      {/* Pagination — carries filters forward */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-gray-500">
-            Page {page} of {totalPages}
+            Page {safePage} of {totalPages}
           </p>
           <div className="flex gap-2">
-            {page > 1 && (
+            {safePage > 1 && (
               <Link
-                href={`/accounts/payments?page=${page - 1}`}
+                href={pageHref(safePage - 1, status, method)}
                 className="px-4 py-2 text-sm font-medium bg-white border rounded-lg text-gray-700 hover:bg-gray-50 transition"
               >
                 ← Prev
               </Link>
             )}
-            {page < totalPages && (
+            {safePage < totalPages && (
               <Link
-                href={`/accounts/payments?page=${page + 1}`}
+                href={pageHref(safePage + 1, status, method)}
                 className="px-4 py-2 text-sm font-medium bg-white border rounded-lg text-gray-700 hover:bg-gray-50 transition"
               >
                 Next →

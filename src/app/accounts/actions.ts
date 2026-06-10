@@ -5,7 +5,8 @@ import { payments } from '@/db/schema/payments';
 import { orders } from '@/db/schema/orders';
 import { quotations } from '@/db/schema/quotations';
 import { users } from '@/db/schema/auth';
-import { count, eq, inArray, isNull, sum, and, desc, gte, lt, sql } from 'drizzle-orm';
+import { clients } from '@/db/schema/clients';
+import { count, eq, inArray, isNull, sum, and, desc, gte, sql } from 'drizzle-orm';
 import { requireRole } from '@/lib/auth';
 
 const PAGE_SIZE = 25;
@@ -105,40 +106,64 @@ export async function getCashPosition() {
   };
 }
 
+const VALID_STATUSES = ['pending', 'completed', 'failed', 'refunded'] as const;
+const VALID_METHODS = ['flutterwave_mobile', 'flutterwave_card', 'bank_transfer', 'cash'] as const;
+
+type PaymentFilters = { status?: string; method?: string };
+
 // ── Payments (paginated) ──────────────────────────────────────────────────
-export async function getPayments(page: number) {
+export async function getPayments(page: number, filters: PaymentFilters = {}) {
   await requireRole(['accountant', 'super_admin']);
 
-  const safePage = Math.max(1, page);
+  // Validate filter values against allow-lists; ignore invalid values
+  const statusFilter = VALID_STATUSES.includes(filters.status as (typeof VALID_STATUSES)[number])
+    ? (filters.status as (typeof VALID_STATUSES)[number])
+    : undefined;
+  const methodFilter = VALID_METHODS.includes(filters.method as (typeof VALID_METHODS)[number])
+    ? (filters.method as (typeof VALID_METHODS)[number])
+    : undefined;
+
+  const whereConditions = and(
+    statusFilter ? eq(payments.status, statusFilter) : undefined,
+    methodFilter ? eq(payments.paymentMethod, methodFilter) : undefined,
+  );
+
+  // Compute totalPages from count first, then clamp page at both ends
+  const countRow = await db
+    .select({ value: count() })
+    .from(payments)
+    .where(whereConditions)
+    .then((r) => r[0]);
+
+  const totalPages = Math.max(1, Math.ceil(Number(countRow.value) / PAGE_SIZE));
+  const safePage = Math.min(Math.max(1, page), totalPages);
   const offset = (safePage - 1) * PAGE_SIZE;
 
-  const [countRow, rows] = await Promise.all([
-    db.select({ value: count() }).from(payments).then((r) => r[0]),
-    db
-      .select({
-        id: payments.id,
-        amount: payments.amount,
-        status: payments.status,
-        paymentMethod: payments.paymentMethod,
-        transactionId: payments.transactionId,
-        createdAt: payments.createdAt,
-        // Customer via payments.userId → users
-        customerName: users.name,
-        customerEmail: users.email,
-        // Order reference
-        orderNumber: orders.orderNumber,
-      })
-      .from(payments)
-      .leftJoin(users, eq(payments.userId, users.id))
-      .leftJoin(orders, eq(payments.orderId, orders.id))
-      .orderBy(desc(payments.createdAt))
-      .limit(PAGE_SIZE)
-      .offset(offset),
-  ]);
+  const rows = await db
+    .select({
+      id: payments.id,
+      amount: payments.amount,
+      status: payments.status,
+      paymentMethod: payments.paymentMethod,
+      transactionId: payments.transactionId,
+      createdAt: payments.createdAt,
+      // Customer via payments.userId → users
+      customerName: users.name,
+      customerEmail: users.email,
+      // Order reference
+      orderNumber: orders.orderNumber,
+    })
+    .from(payments)
+    .where(whereConditions)
+    .leftJoin(users, eq(payments.userId, users.id))
+    .leftJoin(orders, eq(payments.orderId, orders.id))
+    .orderBy(desc(payments.createdAt))
+    .limit(PAGE_SIZE)
+    .offset(offset);
 
   return {
     total: Number(countRow.value),
-    totalPages: Math.max(1, Math.ceil(Number(countRow.value) / PAGE_SIZE)),
+    totalPages,
     page: safePage,
     rows: rows.map((r) => ({
       ...r,
@@ -197,6 +222,24 @@ export async function getReceivables() {
       totalAmount: r.totalAmount ? Number(r.totalAmount) : null,
     })),
   };
+}
+
+// ── Client List (read-only) ───────────────────────────────────────────────
+export async function getClientListReadonly() {
+  await requireRole(['accountant', 'super_admin']);
+
+  return db
+    .select({
+      id: clients.id,
+      name: clients.name,
+      email: clients.email,
+      phone: clients.phone,
+      city: clients.city,
+      status: clients.status,
+    })
+    .from(clients)
+    .where(isNull(clients.deletedAt))
+    .orderBy(clients.name);
 }
 
 // ── Job Status Summary ────────────────────────────────────────────────────

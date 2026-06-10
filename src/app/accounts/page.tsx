@@ -1,5 +1,6 @@
 import { getCashPosition, getReceivables, getJobStatusSummary } from './actions';
 import { ComingSoon } from '@/components/dashboard/ComingSoon';
+import { RevenueChart } from '@/components/dashboard/RevenueChart';
 import { TrendingUp, Clock, DollarSign } from 'lucide-react';
 
 function ugx(n: number) {
@@ -115,6 +116,21 @@ export default async function AccountsPage() {
           </div>
         </div>
       )}
+
+      {/* Monthly collection trend */}
+      <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b">
+          <h3 className="font-semibold text-gray-900">Collected — Last 6 Months</h3>
+          <p className="text-xs text-gray-500 mt-0.5">Completed payments by calendar month</p>
+        </div>
+        <div className="p-4">
+          {cash.monthlyCollected.length > 0 ? (
+            <RevenueChart data={cash.monthlyCollected} />
+          ) : (
+            <p className="py-12 text-center text-sm text-gray-400">No data for the last 6 months</p>
+          )}
+        </div>
+      </div>
 
       {/* Receivables */}
       <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
