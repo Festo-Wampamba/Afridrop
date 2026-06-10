@@ -26,7 +26,7 @@ function roleOf(session: Session): Role {
 }
 
 // The portal-account user IDs a manager is responsible for (their assigned
-// clients). Admin/super_admin return null = full access (no scope filter).
+// clients). super_admin returns null = full access (no scope filter).
 export async function scopedCustomerIds(session: Session): Promise<string[] | null> {
   const role = roleOf(session);
   if (role === 'super_admin') return null;
