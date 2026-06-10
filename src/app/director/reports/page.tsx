@@ -87,7 +87,7 @@ export default async function ReportsPage() {
                 {perf.technicianPerformance
                   .sort((a, b) => b.completedJobs - a.completedJobs)
                   .map((row) => (
-                    <tr key={row.name} className="hover:bg-gray-50">
+                    <tr key={row.technicianId} className="hover:bg-gray-50">
                       <td className="px-6 py-3 text-sm font-medium text-gray-900">{row.name}</td>
                       <td className="px-6 py-3 text-sm font-bold text-right text-[#009FCE]">{row.completedJobs}</td>
                     </tr>

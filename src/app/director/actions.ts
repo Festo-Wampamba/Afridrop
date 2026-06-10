@@ -149,6 +149,7 @@ export async function getDepartmentPerformance() {
 
   return {
     technicianPerformance: technicianJobs.map((r) => ({
+      technicianId: r.technicianId,
       name: `${r.firstName} ${r.lastName}`.trim(),
       completedJobs: Number(r.completedCount),
     })),
