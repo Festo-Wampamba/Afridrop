@@ -9,7 +9,7 @@ import { scopedCustomerIds, getJobs, getActiveTechnicians, getThreads } from '@/
 
 // ── Overview ──────────────────────────────────────────────────────────────
 export async function getManagerData() {
-  const session = await requireRole(['manager', 'super_admin']);
+  const session = await requireRole(['manager', 'super_admin', 'director']);
   const managerId = session.user.id;
 
   const assignedClients = await db
@@ -42,7 +42,7 @@ export async function getManagerData() {
 
 // ── Clients ───────────────────────────────────────────────────────────────
 export async function getManagerClients() {
-  const session = await requireRole(['manager', 'super_admin']);
+  const session = await requireRole(['manager', 'super_admin', 'director']);
   return db
     .select()
     .from(clients)
@@ -52,7 +52,7 @@ export async function getManagerClients() {
 
 // ── Jobs ──────────────────────────────────────────────────────────────────
 export async function getManagerJobsView() {
-  const session = await requireRole(['manager', 'super_admin']);
+  const session = await requireRole(['manager', 'super_admin', 'director']);
   const scope = await scopedCustomerIds(session);
   const [jobs, attendants] = await Promise.all([getJobs(scope), getActiveTechnicians()]);
   const clientNameByUserId = await clientNameMap(session.user.id);
@@ -61,7 +61,7 @@ export async function getManagerJobsView() {
 
 // ── Team (technicians + progress) ─────────────────────────────────────────
 export async function getManagerTeam() {
-  const session = await requireRole(['manager', 'super_admin']);
+  const session = await requireRole(['manager', 'super_admin', 'director']);
   const scope = await scopedCustomerIds(session);
   const [attendants, jobs] = await Promise.all([getActiveTechnicians(), getJobs(scope)]);
 
@@ -79,7 +79,7 @@ export async function getManagerTeam() {
 
 // ── Messages ──────────────────────────────────────────────────────────────
 export async function getManagerMessagesView() {
-  const session = await requireRole(['manager', 'super_admin']);
+  const session = await requireRole(['manager', 'super_admin', 'director']);
   const scope = await scopedCustomerIds(session);
   const threadsMap = await getThreads(scope);
   const clientNameByUserId = await clientNameMap(session.user.id);

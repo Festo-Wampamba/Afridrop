@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { TrendingUp, Briefcase, ShoppingCart, Users, CheckSquare } from 'lucide-react';
+import type { ElementType } from 'react';
 import { getCompanyOverview, getPendingApprovals } from './actions';
 import { RevenueChart } from '@/components/dashboard/RevenueChart';
 import { ComingSoon } from '@/components/dashboard/ComingSoon';
@@ -36,18 +37,20 @@ export default async function DirectorPage() {
     .filter((j) => j.status === 'assigned' || j.status === 'in_progress')
     .reduce((sum, j) => sum + j.count, 0);
 
-  const stats = [
+  const stats: { label: string; value: string | number; icon: ElementType; color: string; href?: string }[] = [
     {
       label: 'Total Revenue',
       value: fmtUGX(overview.totalRevenue),
       icon: TrendingUp,
       color: 'bg-[#009FCE]',
+      href: '/director/reports',
     },
     {
       label: 'Active Jobs',
       value: activeJobs,
       icon: Briefcase,
       color: 'bg-[#00477A]',
+      href: '/director/reports',
     },
     {
       label: 'Total Orders',
@@ -78,19 +81,28 @@ export default async function DirectorPage() {
 
       {/* Stat cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat) => (
-          <div key={stat.label} className="bg-white rounded-xl border p-5 shadow-sm">
-            <div className="flex items-center gap-4">
-              <div className={`${stat.color} p-3 rounded-lg text-white shrink-0`}>
-                <stat.icon size={22} />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">{stat.label}</p>
-                <p className="text-xl font-bold text-gray-900 mt-0.5 truncate">{stat.value}</p>
+        {stats.map((stat) => {
+          const card = (
+            <div className="bg-white rounded-xl border p-5 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-4">
+                <div className={`${stat.color} p-3 rounded-lg text-white shrink-0`}>
+                  <stat.icon size={22} />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">{stat.label}</p>
+                  <p className="text-xl font-bold text-gray-900 mt-0.5 truncate">{stat.value}</p>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+          return stat.href ? (
+            <Link key={stat.label} href={stat.href} className="block">
+              {card}
+            </Link>
+          ) : (
+            <div key={stat.label}>{card}</div>
+          );
+        })}
       </div>
 
       {/* Revenue chart + jobs by status */}

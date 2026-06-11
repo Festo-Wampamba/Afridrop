@@ -17,7 +17,7 @@ export default async function ManagerLayout({
   }
 
   const role = (session.user as { role?: string }).role;
-  if (role !== 'manager' && role !== 'super_admin') {
+  if (role !== 'manager' && role !== 'super_admin' && role !== 'director') {
     redirect(homeForRole(role));
   }
 

@@ -21,7 +21,7 @@ function eatMonthStart(): Date {
 
 // ── Cash Position ─────────────────────────────────────────────────────────
 export async function getCashPosition() {
-  await requireRole(['accountant', 'super_admin']);
+  await requireRole(['accountant', 'super_admin', 'director']);
 
   const monthStart = eatMonthStart();
 
@@ -113,7 +113,7 @@ type PaymentFilters = { status?: string; method?: string };
 
 // ── Payments (paginated) ──────────────────────────────────────────────────
 export async function getPayments(page: number, filters: PaymentFilters = {}) {
-  await requireRole(['accountant', 'super_admin']);
+  await requireRole(['accountant', 'super_admin', 'director']);
 
   // Validate filter values against allow-lists; ignore invalid values
   const statusFilter = VALID_STATUSES.includes(filters.status as (typeof VALID_STATUSES)[number])
@@ -174,7 +174,7 @@ export async function getPayments(page: number, filters: PaymentFilters = {}) {
 
 // ── Receivables ───────────────────────────────────────────────────────────
 export async function getReceivables() {
-  await requireRole(['accountant', 'super_admin']);
+  await requireRole(['accountant', 'super_admin', 'director']);
 
   const [pendingOrders, receivableQuotations] = await Promise.all([
     // Orders where payment is still pending
@@ -226,7 +226,7 @@ export async function getReceivables() {
 
 // ── Client List (read-only) ───────────────────────────────────────────────
 export async function getClientListReadonly() {
-  await requireRole(['accountant', 'super_admin']);
+  await requireRole(['accountant', 'super_admin', 'director']);
 
   return db
     .select({
@@ -244,7 +244,7 @@ export async function getClientListReadonly() {
 
 // ── Job Status Summary ────────────────────────────────────────────────────
 export async function getJobStatusSummary() {
-  await requireRole(['accountant', 'super_admin']);
+  await requireRole(['accountant', 'super_admin', 'director']);
 
   const JOB_STATUSES = ['assigned', 'in_progress', 'completed', 'verified'] as const;
 

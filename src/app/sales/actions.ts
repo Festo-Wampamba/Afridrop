@@ -11,7 +11,7 @@ const APPROVAL_STATUSES = ['pending', 'reviewed', 'approved', 'rejected', 'conve
 
 // ── Sales Overview ──────────────────────────────────────────────────────────
 export async function getSalesOverview() {
-  await requireRole(['sales_manager', 'super_admin']);
+  await requireRole(['sales_manager', 'super_admin', 'director']);
 
   const sixMonthsAgo = new Date();
   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
@@ -83,7 +83,7 @@ export async function getSalesOverview() {
 
 // ── Leads ───────────────────────────────────────────────────────────────────
 export async function getLeads() {
-  await requireRole(['sales_manager', 'super_admin']);
+  await requireRole(['sales_manager', 'super_admin', 'director']);
 
   const rows = await db
     .select({
@@ -103,7 +103,7 @@ export async function getLeads() {
 
 // ── Recent Quotations ────────────────────────────────────────────────────────
 export async function getRecentQuotations() {
-  await requireRole(['sales_manager', 'super_admin']);
+  await requireRole(['sales_manager', 'super_admin', 'director']);
 
   const rows = await db
     .select({

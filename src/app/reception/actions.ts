@@ -12,7 +12,7 @@ import { requireRole } from '@/lib/auth';
 // Returns active technicians with their active-job count (assigned or in_progress).
 // Sorted least-busy first. No staff email/phone — name + id only.
 export async function getTechnicianAvailability() {
-  await requireRole(['receptionist', 'super_admin']);
+  await requireRole(['receptionist', 'super_admin', 'director']);
 
   const activeJobCount = db
     .select({ assignedTo: quotations.assignedTo, cnt: count().as('cnt') })
@@ -54,7 +54,7 @@ export async function getTechnicianAvailability() {
 // ── Recent Inbound Inquiries ─────────────────────────────────────────────────
 // Latest 10 inbound messages with sender name + snippet.
 export async function getRecentInquiries() {
-  await requireRole(['receptionist', 'super_admin']);
+  await requireRole(['receptionist', 'super_admin', 'director']);
 
   const rows = await db
     .select({
@@ -86,7 +86,7 @@ export async function getRecentInquiries() {
 // Client contact info — NO financial joins, excludes soft-deleted.
 // Optional case-insensitive name or phone search.
 export async function getContactDirectory(query?: string) {
-  await requireRole(['receptionist', 'super_admin']);
+  await requireRole(['receptionist', 'super_admin', 'director']);
 
   const q = query?.trim();
   const escaped = q ? q.replace(/[\\%_]/g, (m) => '\\' + m) : undefined;

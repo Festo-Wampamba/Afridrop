@@ -16,7 +16,7 @@ export default async function TechnicianLayout({
   }
 
   const role = (session.user as { role?: string }).role;
-  if (role !== 'technician') {
+  if (role !== 'technician' && role !== 'super_admin' && role !== 'director') {
     redirect(homeForRole(role));
   }
 

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { getCashPosition, getReceivables, getJobStatusSummary } from './actions';
 import { ComingSoon } from '@/components/dashboard/ComingSoon';
 import { RevenueChart } from '@/components/dashboard/RevenueChart';
@@ -58,7 +59,7 @@ export default async function AccountsPage() {
 
       {/* Cash cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl border shadow-sm p-6 flex items-start gap-4">
+        <Link href="/accounts/payments" className="bg-white rounded-xl border shadow-sm p-6 flex items-start gap-4 hover:shadow-md transition-shadow">
           <div className="flex-shrink-0 rounded-full bg-[#009FCE]/10 p-3">
             <TrendingUp className="text-[#009FCE]" size={20} />
           </div>
@@ -66,9 +67,9 @@ export default async function AccountsPage() {
             <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Collected This Month</p>
             <p className="text-2xl font-bold text-gray-900 mt-1">{ugx(cash.collectedThisMonth)}</p>
           </div>
-        </div>
+        </Link>
 
-        <div className="bg-white rounded-xl border shadow-sm p-6 flex items-start gap-4">
+        <Link href="/accounts/payments" className="bg-white rounded-xl border shadow-sm p-6 flex items-start gap-4 hover:shadow-md transition-shadow">
           <div className="flex-shrink-0 rounded-full bg-amber-50 p-3">
             <Clock className="text-amber-600" size={20} />
           </div>
@@ -77,9 +78,9 @@ export default async function AccountsPage() {
             <p className="text-2xl font-bold text-gray-900 mt-1">{ugx(cash.pendingTotal)}</p>
             <p className="text-xs text-gray-400 mt-0.5">{cash.pendingCount} transaction{cash.pendingCount !== 1 ? 's' : ''}</p>
           </div>
-        </div>
+        </Link>
 
-        <div className="bg-white rounded-xl border shadow-sm p-6 flex items-start gap-4">
+        <Link href="/accounts/payments" className="bg-white rounded-xl border shadow-sm p-6 flex items-start gap-4 hover:shadow-md transition-shadow">
           <div className="flex-shrink-0 rounded-full bg-green-50 p-3">
             <DollarSign className="text-green-600" size={20} />
           </div>
@@ -87,7 +88,7 @@ export default async function AccountsPage() {
             <p className="text-xs font-medium uppercase tracking-wide text-gray-500">All-time Collected</p>
             <p className="text-2xl font-bold text-gray-900 mt-1">{ugx(cash.collectedAllTime)}</p>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* Payment method breakdown */}
