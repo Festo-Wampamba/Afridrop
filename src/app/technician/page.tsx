@@ -1,4 +1,5 @@
-import { MapPin, Phone, Wrench, CheckCircle2, Clock } from 'lucide-react';
+import Link from 'next/link';
+import { MapPin, Phone, Wrench, CheckCircle2, FileText, MessageSquare } from 'lucide-react';
 import { getMyJobs, getMyCompletedToday, updateMyJobStatus } from './actions';
 import { JOB_STATUS_COLORS } from '@/lib/work';
 import { SubmitButton } from '@/components/dashboard/SubmitButton';
@@ -136,22 +137,35 @@ export default async function TechnicianPage() {
         </section>
       )}
 
+      {/* Quick links */}
+      <section>
+        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">More</h3>
+        <div className="grid grid-cols-2 gap-3">
+          <Link
+            href="/technician/reports"
+            className="rounded-xl border bg-white p-4 flex flex-col items-center gap-2 text-center hover:border-[#009FCE] hover:shadow-sm transition-all active:bg-slate-50"
+          >
+            <FileText size={20} className="text-[#009FCE]" />
+            <p className="text-xs text-gray-700 font-medium">My Reports</p>
+          </Link>
+          <Link
+            href="/technician/messages"
+            className="rounded-xl border bg-white p-4 flex flex-col items-center gap-2 text-center hover:border-[#009FCE] hover:shadow-sm transition-all active:bg-slate-50"
+          >
+            <MessageSquare size={20} className="text-[#009FCE]" />
+            <p className="text-xs text-gray-700 font-medium">Ask about a task</p>
+          </Link>
+        </div>
+      </section>
+
       {/* Coming soon */}
       <section>
         <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Coming soon</h3>
         <div className="grid grid-cols-2 gap-3">
-          {[
-            { icon: MapPin, label: 'Map navigation' },
-            { icon: Clock, label: 'Time logs & field notes' },
-          ].map(({ icon: Icon, label }) => (
-            <div
-              key={label}
-              className="rounded-xl border border-dashed border-gray-200 bg-white/60 p-4 flex flex-col items-center gap-2 text-center"
-            >
-              <Icon size={20} className="text-gray-300" />
-              <p className="text-xs text-gray-400 font-medium">{label}</p>
-            </div>
-          ))}
+          <div className="rounded-xl border border-dashed border-gray-200 bg-white/60 p-4 flex flex-col items-center gap-2 text-center">
+            <MapPin size={20} className="text-gray-300" />
+            <p className="text-xs text-gray-400 font-medium">Map navigation</p>
+          </div>
         </div>
       </section>
     </div>

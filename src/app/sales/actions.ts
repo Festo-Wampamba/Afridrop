@@ -6,8 +6,9 @@ import { quotations } from '@/db/schema/quotations';
 import { payments } from '@/db/schema/payments';
 import { count, eq, inArray, isNull, sum, and, desc, gte, sql } from 'drizzle-orm';
 import { requireRole } from '@/lib/auth';
+import { scopedCustomerIds, getJobs, getActiveTechnicians } from '@/lib/work';
 
-const APPROVAL_STATUSES = ['pending', 'reviewed', 'approved', 'rejected', 'converted'] as const;
+const APPROVAL_STATUSES = ['pending', 'reviewed', 'approved', 'rejected', 'converted', 'on_hold', 'cancelled'] as const;
 
 // ── Sales Overview ──────────────────────────────────────────────────────────
 export async function getSalesOverview() {
@@ -65,12 +66,14 @@ export async function getSalesOverview() {
   const approved = byStatus['approved'] ?? 0;
   const rejected = byStatus['rejected'] ?? 0;
   const converted = byStatus['converted'] ?? 0;
-  const total = pending + reviewed + approved + rejected + converted;
+  const on_hold = byStatus['on_hold'] ?? 0;
+  const cancelled = byStatus['cancelled'] ?? 0;
+  const total = pending + reviewed + approved + rejected + converted + on_hold;
   // Denominator: approval-workflow statuses only — intentionally excludes job-lifecycle rows (director reports use all quotations)
   const conversionRate = total > 0 ? Math.round(((approved + converted) / total) * 100) : 0;
 
   return {
-    pipeline: { pending, reviewed, approved, rejected, converted },
+    pipeline: { pending, reviewed, approved, rejected, converted, on_hold, cancelled },
     conversionRate,
     totalPipelineQuotations: total,
     leadsCount: Number(leadsRow?.value ?? 0),
@@ -123,4 +126,19 @@ export async function getRecentQuotations() {
     ...r,
     totalAmount: r.totalAmount ? Number(r.totalAmount) : null,
   }));
+}
+
+// ── Jobs (full scope — sales_manager sees all) ───────────────────────────────
+export async function getSalesJobsView() {
+  const session = await requireRole(['sales_manager', 'super_admin', 'director']);
+  const scope = await scopedCustomerIds(session);
+  const [jobs, attendants] = await Promise.all([getJobs(scope), getActiveTechnicians()]);
+  // Build a client name map from job rows themselves (customerName stored on quotation)
+  const clientNameByUserId = new Map<string, string>();
+  for (const { job } of jobs) {
+    if (job.customerId && job.customerName) {
+      clientNameByUserId.set(job.customerId, job.customerName);
+    }
+  }
+  return { jobs, attendants, clientNameByUserId };
 }

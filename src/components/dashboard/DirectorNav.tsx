@@ -2,11 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, CheckSquare, BarChart2 } from 'lucide-react';
+import { LayoutDashboard, CheckSquare, BarChart2, FileText } from 'lucide-react';
 
 const ITEMS = [
   { href: '/director', label: 'Overview', icon: LayoutDashboard, exact: true },
   { href: '/director/approvals', label: 'Approvals', icon: CheckSquare, exact: false },
+  { href: '/director/quotations', label: 'Quotations', icon: FileText, exact: false },
   { href: '/director/reports', label: 'Reports', icon: BarChart2, exact: false },
 ];
 

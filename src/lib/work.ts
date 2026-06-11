@@ -29,7 +29,7 @@ function roleOf(session: Session): Role {
 // clients). super_admin returns null = full access (no scope filter).
 export async function scopedCustomerIds(session: Session): Promise<string[] | null> {
   const role = roleOf(session);
-  if (role === 'super_admin' || role === 'director') return null;
+  if (role === 'super_admin' || role === 'director' || role === 'sales_manager') return null;
 
   const rows = await db
     .select({ userId: clients.userId })

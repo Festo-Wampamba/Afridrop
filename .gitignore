@@ -44,3 +44,6 @@ next-env.d.ts
 # Uploaded images
 public/uploads/
 _legacy/
+
+# Playwright MCP browser artifacts
+.playwright-mcp/
