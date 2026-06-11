@@ -8,7 +8,7 @@ export default async function ManagerJobsPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold text-gray-900">Jobs &amp; Service Requests</h2>
-        <p className="text-sm text-gray-500 mt-1">Assign attendants, track progress, and verify completed work.</p>
+        <p className="text-sm text-gray-500 mt-1">Assign technicians, track progress, and verify completed work.</p>
       </div>
       <JobsBoard jobs={jobs} attendants={attendants} clientNameByUserId={clientNameByUserId} path="/manager/jobs" />
     </div>

@@ -22,7 +22,7 @@ export function TeamGrid({ team }: { team: TeamMember[] }) {
   if (team.length === 0) {
     return (
       <div className="bg-white rounded-xl border shadow-sm px-5 py-16 text-center text-sm text-gray-400">
-        No attendants found. Create attendant accounts in User Management.
+        No technicians found. Create technician accounts in User Management.
       </div>
     );
   }

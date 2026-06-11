@@ -18,7 +18,11 @@ export function proxy(request: NextRequest) {
     pathname.startsWith("/admin") ||
     pathname.startsWith("/portal") ||
     pathname.startsWith("/manager") ||
-    pathname.startsWith("/attendant");
+    pathname.startsWith("/technician") ||
+    pathname.startsWith("/director") ||
+    pathname.startsWith("/sales") ||
+    pathname.startsWith("/accounts") ||
+    pathname.startsWith("/reception");
 
   // Already logged in → leave the login page. Role-correct home is resolved by
   // the login page after sign-in; "/" is a safe neutral landing for any role.
@@ -40,7 +44,11 @@ export const config = {
     "/admin/:path*",
     "/portal/:path*",
     "/manager/:path*",
-    "/attendant/:path*",
+    "/technician/:path*",
+    "/director/:path*",
+    "/sales/:path*",
+    "/accounts/:path*",
+    "/reception/:path*",
     "/auth/:path*",
   ],
 };

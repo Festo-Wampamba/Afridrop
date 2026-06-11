@@ -3,10 +3,10 @@ import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { auth, getSession } from '@/lib/auth';
 import { homeForRole } from '@/lib/roles';
-import { ManagerNav } from '@/components/dashboard/ManagerNav';
+import { DirectorNav } from '@/components/dashboard/DirectorNav';
 import { LogOut, Globe } from 'lucide-react';
 
-export default async function ManagerLayout({
+export default async function DirectorLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -17,18 +17,18 @@ export default async function ManagerLayout({
   }
 
   const role = (session.user as { role?: string }).role;
-  if (role !== 'manager' && role !== 'super_admin') {
+  if (role !== 'director' && role !== 'super_admin') {
     redirect(homeForRole(role));
   }
 
-  const initial = session.user.name?.[0]?.toUpperCase() ?? 'M';
+  const initial = session.user.name?.[0]?.toUpperCase() ?? 'D';
 
   return (
     <div className="min-h-dvh bg-slate-50">
       <header className="bg-[#00477A] text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between gap-4">
           <div className="min-w-0">
-            <p className="text-xs font-medium uppercase tracking-wide text-[#B6E9F4]">Manager Dashboard</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-[#B6E9F4]">Director Dashboard</p>
             <h1 className="text-xl font-bold mt-0.5 truncate">{session.user.name}</h1>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
@@ -63,7 +63,7 @@ export default async function ManagerLayout({
 
       <div className="bg-white border-b sticky top-0 z-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <ManagerNav />
+          <DirectorNav />
         </div>
       </div>
 

@@ -6,7 +6,7 @@ import { getThreads } from '@/lib/work';
 import { MessagesPanel } from '@/components/dashboard/MessagesPanel';
 
 export default async function AdminMessagesPage() {
-  await requireRole(['admin', 'super_admin']);
+  await requireRole(['super_admin']);
 
   const [threadsMap, clientRows] = await Promise.all([
     getThreads(null),

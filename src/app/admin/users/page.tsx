@@ -9,7 +9,7 @@ import { PasswordField } from '@/components/admin/PasswordField';
 import Link from 'next/link';
 
 // super_admin is reserved and cannot be assigned through this UI.
-const ASSIGNABLE_ROLES = ['admin', 'manager', 'attendant', 'customer'] as const;
+const ASSIGNABLE_ROLES = ['director', 'manager', 'sales_manager', 'accountant', 'receptionist', 'technician', 'customer'] as const;
 type AssignableRole = (typeof ASSIGNABLE_ROLES)[number];
 
 function toAssignableRole(value: string): AssignableRole {
@@ -185,7 +185,9 @@ export default async function UsersPage({
                 >
                   <option value="">Select Role</option>
                   {ASSIGNABLE_ROLES.map((r) => (
-                    <option key={r} value={r}>{r}</option>
+                    <option key={r} value={r}>
+                      {r.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
+                    </option>
                   ))}
                 </select>
               </div>

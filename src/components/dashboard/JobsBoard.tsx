@@ -8,7 +8,7 @@ type JobRow = {
   assignee: { id: string | null; firstName: string | null; lastName: string | null } | null;
 };
 
-type Attendant = { id: string; firstName: string; lastName: string; email: string };
+type Technician = { id: string; firstName: string; lastName: string; email: string };
 
 export function JobsBoard({
   jobs,
@@ -17,7 +17,7 @@ export function JobsBoard({
   path,
 }: {
   jobs: JobRow[];
-  attendants: Attendant[];
+  attendants: Technician[];
   clientNameByUserId: Map<string, string>;
   path: string;
 }) {
@@ -62,7 +62,7 @@ export function JobsBoard({
               <form action={assignAttendant} className="space-y-1.5 pt-3">
                 <input type="hidden" name="jobId" value={job.id} />
                 <input type="hidden" name="_path" value={path} />
-                <label htmlFor={`att-${job.id}`} className="block text-xs font-medium text-gray-500">Attendant</label>
+                <label htmlFor={`att-${job.id}`} className="block text-xs font-medium text-gray-500">Technician</label>
                 <div className="flex gap-2">
                   <select
                     id={`att-${job.id}`}

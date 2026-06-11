@@ -2,15 +2,15 @@ import { db } from '@/db';
 import { clients } from '@/db/schema/clients';
 import { isNull } from 'drizzle-orm';
 import { requireRole } from '@/lib/auth';
-import { getJobs, getActiveAttendants } from '@/lib/work';
+import { getJobs, getActiveTechnicians } from '@/lib/work';
 import { JobsBoard } from '@/components/dashboard/JobsBoard';
 
 export default async function AdminJobsPage() {
-  await requireRole(['admin', 'super_admin']);
+  await requireRole(['super_admin']);
 
   const [jobs, attendants, clientRows] = await Promise.all([
     getJobs(null),
-    getActiveAttendants(),
+    getActiveTechnicians(),
     db.select({ userId: clients.userId, name: clients.name }).from(clients).where(isNull(clients.deletedAt)),
   ]);
 
@@ -21,7 +21,7 @@ export default async function AdminJobsPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-gray-900">Service Requests</h2>
-        <p className="text-gray-500 text-sm mt-1">Assign attendants, track progress, and verify completed work across all clients.</p>
+        <p className="text-gray-500 text-sm mt-1">Assign technicians, track progress, and verify completed work across all clients.</p>
       </div>
       <JobsBoard jobs={jobs} attendants={attendants} clientNameByUserId={clientNameByUserId} path="/admin/jobs" />
     </div>

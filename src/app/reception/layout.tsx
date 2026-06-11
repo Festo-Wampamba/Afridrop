@@ -3,9 +3,10 @@ import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { auth, getSession } from '@/lib/auth';
 import { homeForRole } from '@/lib/roles';
+import { ReceptionNav } from '@/components/dashboard/ReceptionNav';
 import { LogOut, Globe } from 'lucide-react';
 
-export default async function AttendantLayout({
+export default async function ReceptionLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -16,19 +17,19 @@ export default async function AttendantLayout({
   }
 
   const role = (session.user as { role?: string }).role;
-  if (role !== 'attendant') {
+  if (role !== 'receptionist' && role !== 'super_admin') {
     redirect(homeForRole(role));
   }
 
-  const initial = session.user.name?.[0]?.toUpperCase() ?? 'A';
+  const initial = session.user.name?.[0]?.toUpperCase() ?? 'R';
 
   return (
     <div className="min-h-dvh bg-slate-50">
       <header className="bg-[#00477A] text-white">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between gap-4">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-[#B6E9F4]">Attendant Dashboard</p>
-            <h1 className="text-xl font-bold mt-0.5">{session.user.name}</h1>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-xs font-medium uppercase tracking-wide text-[#B6E9F4]">Reception</p>
+            <h1 className="text-xl font-bold mt-0.5 truncate">{session.user.name}</h1>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <Link
@@ -59,7 +60,14 @@ export default async function AttendantLayout({
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8">{children}</main>
+
+      <div className="bg-white border-b sticky top-0 z-10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <ReceptionNav />
+        </div>
+      </div>
+
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">{children}</main>
     </div>
   );
 }

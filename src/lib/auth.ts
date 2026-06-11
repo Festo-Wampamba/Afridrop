@@ -49,7 +49,7 @@ export const auth = betterAuth({
       ac,
       roles,
       defaultRole: "customer",
-      adminRoles: ["admin", "super_admin"],
+      adminRoles: ["super_admin"],
     }),
     // nextCookies must be the last plugin.
     nextCookies(),
@@ -65,7 +65,7 @@ export async function getSession() {
   return auth.api.getSession({ headers: await headers() });
 }
 
-const PRIVILEGED_ROLES = ["admin", "super_admin"];
+const PRIVILEGED_ROLES = ["super_admin"];
 
 // Returns the session only if the user holds an allowed role, else null.
 // Use in form actions (useActionState) that return { error } on rejection.
