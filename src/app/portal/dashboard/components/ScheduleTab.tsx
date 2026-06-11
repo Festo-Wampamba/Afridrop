@@ -30,6 +30,7 @@ const serviceTypeOptions = [
   { value: 'cleaning', label: 'Deep Cleaning' },
   { value: 'inspection', label: 'Safety Inspection' },
   { value: 'repair', label: 'Repair Service' },
+  { value: 'other', label: 'Other (describe below)' },
 ];
 
 export default function ScheduleTab({ data }: { data: ServiceRequest[] }) {
@@ -42,6 +43,7 @@ export default function ScheduleTab({ data }: { data: ServiceRequest[] }) {
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [selectedServiceType, setSelectedServiceType] = useState('maintenance');
 
   // Filter data
   const filteredData = data.filter(item => {
@@ -159,7 +161,12 @@ export default function ScheduleTab({ data }: { data: ServiceRequest[] }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Service Type</label>
-                <select name="serviceType" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#009FCE]/50">
+                <select
+                  name="serviceType"
+                  value={selectedServiceType}
+                  onChange={(e) => setSelectedServiceType(e.target.value)}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#009FCE]/50"
+                >
                   {serviceTypeOptions.map(opt => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
                   ))}
@@ -169,6 +176,28 @@ export default function ScheduleTab({ data }: { data: ServiceRequest[] }) {
                 <label className="block text-sm font-medium text-slate-700 mb-1">Preferred Date</label>
                 <input type="date" name="date" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#009FCE]/50" required />
               </div>
+            </div>
+            {selectedServiceType === 'other' && (
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Describe the service you need <span className="text-red-500">*</span></label>
+                <input
+                  type="text"
+                  name="customServiceType"
+                  maxLength={100}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#009FCE]/50"
+                  placeholder="e.g. Pest control, generator servicing…"
+                  required
+                />
+              </div>
+            )}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Location / Address <span className="text-slate-400 font-normal">(optional)</span></label>
+              <input
+                type="text"
+                name="location"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#009FCE]/50"
+                placeholder="e.g. Plot 12, Kampala Road, Kampala"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>

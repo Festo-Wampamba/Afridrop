@@ -103,6 +103,7 @@ export async function submitServiceRequest(formData: FormData) {
   const serviceType = formData.get('serviceType') as string;
   const description = formData.get('description') as string;
   const preferredDate = formData.get('date') as string;
+  const location = (formData.get('location') as string | null)?.trim() || null;
 
   const serviceTypeLabels: Record<string, string> = {
     maintenance: 'Regular Maintenance',
@@ -111,13 +112,23 @@ export async function submitServiceRequest(formData: FormData) {
     repair: 'Repair Service',
   };
 
+  let serviceLabel: string;
+  if (serviceType === 'other') {
+    const custom = (formData.get('customServiceType') as string | null)?.trim().slice(0, 100) ?? '';
+    if (!custom) throw new Error('Please describe the service you need.');
+    serviceLabel = custom;
+  } else {
+    serviceLabel = serviceTypeLabels[serviceType] || serviceType;
+  }
+
   await db.insert(quotations).values({
     quotationNumber: `SVC-${Date.now()}`,
     customerId: user.id,
     customerName: `${user.firstName} ${user.lastName}`,
     customerEmail: user.email,
     projectDescription: description,
-    notes: serviceTypeLabels[serviceType] || serviceType,
+    notes: serviceLabel,
+    location,
     validUntil: preferredDate || null,
     status: 'pending',
   });
