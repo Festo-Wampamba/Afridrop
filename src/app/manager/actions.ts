@@ -81,21 +81,42 @@ export async function getManagerTeam() {
 export async function getManagerMessagesView() {
   const session = await requireRole(['manager', 'super_admin', 'director']);
   const scope = await scopedCustomerIds(session);
-  const threadsMap = await getThreads(scope);
+  const technicians = await getActiveTechnicians();
+  const technicianIds = technicians.map((t) => t.id);
+
+  // Scoped managers see their client threads AND all technician threads.
+  const effectiveScope =
+    scope === null ? null : [...new Set([...scope, ...technicianIds])];
+
+  const threadsMap = await getThreads(effectiveScope);
   const clientNameByUserId = await clientNameMap(session.user.id);
+
+  const techNameById = new Map(
+    technicians.map((t) => [t.id, [t.firstName, t.lastName].filter(Boolean).join(' ') || t.email]),
+  );
 
   const threads = Array.from(threadsMap.entries()).map(([userId, t]) => ({
     userId,
-    name: clientNameByUserId.get(userId) ?? t.latest.subject,
+    name:
+      clientNameByUserId.get(userId) ??
+      techNameById.get(userId) ??
+      t.latest.subject,
     latest: t.latest,
     unread: t.unread,
     count: t.count,
   }));
 
-  // Clients with a portal account can receive messages.
-  const recipients = (await getManagerClients())
+  // Clients with a portal account can receive messages, plus all technicians.
+  const clientRecipients = (await getManagerClients())
     .filter((c) => c.userId)
     .map((c) => ({ userId: c.userId as string, name: c.name }));
+
+  const techRecipients = technicians.map((t) => ({
+    userId: t.id,
+    name: ([t.firstName, t.lastName].filter(Boolean).join(' ') || t.email) + ' (Technician)',
+  }));
+
+  const recipients = [...clientRecipients, ...techRecipients];
 
   return { threads, recipients };
 }

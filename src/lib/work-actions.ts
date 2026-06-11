@@ -7,7 +7,7 @@ import { messages } from '@/db/schema/messages';
 import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { requireRole } from '@/lib/auth';
-import { scopedCustomerIds, JOB_STATUSES, type JobStatus } from '@/lib/work';
+import { scopedCustomerIds, getActiveTechnicians, JOB_STATUSES, type JobStatus } from '@/lib/work';
 
 const WORK_ROLES = ['manager', 'director', 'sales_manager', 'super_admin'];
 
@@ -106,8 +106,12 @@ export async function sendStaffMessage(formData: FormData) {
   if (!content) return;
 
   const scope = await scopedCustomerIds(session);
-  if (scope !== null && !scope.includes(userId)) {
-    throw new Error('Forbidden: recipient outside your client scope');
+  if (scope !== null) {
+    const technicianIds = (await getActiveTechnicians()).map((t) => t.id);
+    const effectiveScope = [...new Set([...scope, ...technicianIds])];
+    if (!effectiveScope.includes(userId)) {
+      throw new Error('Forbidden: recipient outside your client scope');
+    }
   }
 
   await db.insert(messages).values({

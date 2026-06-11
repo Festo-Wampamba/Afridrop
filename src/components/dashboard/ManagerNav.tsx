@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Contact, ClipboardList, Users, MessagesSquare } from 'lucide-react';
+import { LayoutDashboard, Contact, ClipboardList, Users, MessagesSquare, FileText } from 'lucide-react';
 
 const ITEMS = [
   { href: '/manager', label: 'Overview', icon: LayoutDashboard, exact: true },
@@ -10,6 +10,7 @@ const ITEMS = [
   { href: '/manager/jobs', label: 'Jobs', icon: ClipboardList, exact: false },
   { href: '/manager/team', label: 'Team', icon: Users, exact: false },
   { href: '/manager/messages', label: 'Messages', icon: MessagesSquare, exact: false },
+  { href: '/manager/reports', label: 'Reports', icon: FileText, exact: false },
 ];
 
 export function ManagerNav() {
