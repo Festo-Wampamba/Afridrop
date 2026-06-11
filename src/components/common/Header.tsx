@@ -17,8 +17,8 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Client Portal', 
     href: '#', // Changed to # since it's a dropdown trigger
     children: [
-      { label: 'Client Login', href: '/portal/login' },
-      { label: 'Technician Portal', href: '/portal/technician' }
+      { label: 'Client Login', href: '/auth/login' },
+      { label: 'Staff Login', href: '/auth/login' }
     ]
   },
 ];

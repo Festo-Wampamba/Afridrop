@@ -54,7 +54,7 @@ export default async function AdminOverview() {
       value: liveSessionsRow.value,
       icon: Monitor,
       color: 'bg-[#00477A]',
-      href: null,
+      href: '/admin/audit',
     },
     {
       label: 'Database',

@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import { db } from "@/db";
 import { users, sessions, accounts, verifications } from "@/db/schema/auth";
 import { ac, roles } from "@/lib/permissions";
+import { eq } from "drizzle-orm";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -35,6 +36,10 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
+    // Sign-ups are staff-provisioning only (no public self-signup UI).
+    // autoSignIn would replace the provisioning manager's session with
+    // the newly created technician's session.
+    autoSignIn: false,
   },
   user: {
     additionalFields: {
@@ -61,8 +66,20 @@ export const { GET, POST } = toNextJsHandler(auth);
 export type Session = typeof auth.$Infer.Session;
 
 // Resolve the current session from request headers (server components/actions).
+// Returns null if the session is missing or the user has been deactivated / soft-deleted.
 export async function getSession() {
-  return auth.api.getSession({ headers: await headers() });
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.id) return session;
+
+  const [row] = await db
+    .select({ isActive: users.isActive, deletedAt: users.deletedAt })
+    .from(users)
+    .where(eq(users.id, session.user.id))
+    .limit(1);
+
+  if (!row || row.isActive === false || row.deletedAt !== null) return null;
+
+  return session;
 }
 
 const PRIVILEGED_ROLES = ["super_admin"];

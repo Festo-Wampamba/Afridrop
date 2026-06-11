@@ -17,7 +17,7 @@ export default async function AccountsLayout({
   }
 
   const role = (session.user as { role?: string }).role;
-  if (role !== 'accountant' && role !== 'super_admin') {
+  if (role !== 'accountant' && role !== 'super_admin' && role !== 'director') {
     redirect(homeForRole(role));
   }
 

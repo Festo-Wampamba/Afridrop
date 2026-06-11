@@ -27,7 +27,7 @@ const SAFE_COLS = {
 
 // Active work queue: assigned or in-progress jobs for this technician, oldest first.
 export async function getMyJobs() {
-  const session = await requireRole(['technician']);
+  const session = await requireRole(['technician', 'super_admin', 'director']);
 
   return db
     .select(SAFE_COLS)
@@ -45,7 +45,7 @@ export async function getMyJobs() {
 
 // Jobs completed or verified by this technician today.
 export async function getMyCompletedToday() {
-  const session = await requireRole(['technician']);
+  const session = await requireRole(['technician', 'super_admin', 'director']);
 
   const todayStart = new Date(
     new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Kampala' }).format(new Date()) + 'T00:00:00+03:00'

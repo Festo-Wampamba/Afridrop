@@ -17,7 +17,7 @@ export default async function SalesLayout({
   }
 
   const role = (session.user as { role?: string }).role;
-  if (role !== 'sales_manager' && role !== 'super_admin') {
+  if (role !== 'sales_manager' && role !== 'super_admin' && role !== 'director') {
     redirect(homeForRole(role));
   }
 

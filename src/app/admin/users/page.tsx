@@ -1,12 +1,15 @@
 import { db } from '@/db';
 import { users } from '@/db/schema';
-import { eq, desc, isNull } from 'drizzle-orm';
+import { eq, desc, isNull, isNotNull } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { auth, requireRole } from '@/lib/auth';
 import { PasswordField } from '@/components/admin/PasswordField';
+import { SubmitButton } from '@/components/dashboard/SubmitButton';
 import Link from 'next/link';
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 // super_admin is reserved and cannot be assigned through this UI.
 const ASSIGNABLE_ROLES = ['director', 'manager', 'sales_manager', 'accountant', 'receptionist', 'technician', 'customer'] as const;
@@ -28,17 +31,34 @@ async function createUser(formData: FormData) {
   const lastName = formData.get('lastName') as string;
   const role = (formData.get('role') as string) || 'customer';
 
-  // Better Auth admin plugin creates the user + credential account + role.
-  await auth.api.createUser({
-    body: {
-      email,
-      password,
-      name: `${firstName} ${lastName}`,
-      role: toAssignableRole(role),
-      data: { firstName, lastName },
-    },
-    headers: await headers(),
-  });
+  try {
+    // Better Auth admin plugin creates the user + credential account + role.
+    await auth.api.createUser({
+      body: {
+        email,
+        password,
+        name: `${firstName} ${lastName}`,
+        role: toAssignableRole(role),
+        data: { firstName, lastName },
+      },
+      headers: await headers(),
+    });
+  } catch {
+    // Check whether the email belongs to an existing (possibly soft-deleted) user.
+    const [existing] = await db
+      .select({ deletedAt: users.deletedAt })
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+
+    if (existing?.deletedAt !== null && existing?.deletedAt !== undefined) {
+      redirect('/admin/users?error=deactivated');
+    }
+    if (existing) {
+      redirect('/admin/users?error=duplicate');
+    }
+    throw new Error('Failed to create user');
+  }
 
   revalidatePath('/admin/users');
   redirect('/admin/users');
@@ -89,21 +109,50 @@ async function deleteUser(formData: FormData) {
   revalidatePath('/admin/users');
 }
 
+async function restoreUser(formData: FormData) {
+  'use server';
+  await requireRole(['super_admin']);
+
+  const id = formData.get('id') as string;
+  if (!UUID_RE.test(id)) throw new Error('Invalid user id');
+
+  await db
+    .update(users)
+    .set({ deletedAt: null, isActive: true, updatedAt: new Date() })
+    .where(eq(users.id, id))
+    .returning();
+
+  revalidatePath('/admin/users');
+}
+
 export default async function UsersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ action?: string; edit?: string }>;
+  searchParams: Promise<{ action?: string; edit?: string; error?: string }>;
 }) {
   const params = await searchParams;
   const showCreate = params.action === 'create';
   const editId = params.edit;
+  const errorParam = params.error;
 
   const allUsers = await db.query.users.findMany({
     where: isNull(users.deletedAt),
     orderBy: desc(users.createdAt),
   });
 
+  const deactivatedUsers = await db.query.users.findMany({
+    where: isNotNull(users.deletedAt),
+    orderBy: desc(users.deletedAt),
+  });
+
   const editUser = editId ? allUsers.find((u) => u.id === editId) : null;
+
+  const errorMessage =
+    errorParam === 'deactivated'
+      ? 'This email belongs to a deactivated account. Restore it below instead.'
+      : errorParam === 'duplicate'
+      ? 'A user with this email already exists.'
+      : null;
 
   return (
     <div className="space-y-6">
@@ -121,6 +170,12 @@ export default async function UsersPage({
           </Link>
         )}
       </div>
+
+      {errorMessage && (
+        <div className="rounded-md bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+          {errorMessage}
+        </div>
+      )}
 
       {(showCreate || editUser) && (
         <div className="bg-white rounded-xl border p-6 shadow-sm">
@@ -273,6 +328,60 @@ export default async function UsersPage({
           </tbody>
         </table>
       </div>
+
+      {deactivatedUsers.length > 0 && (
+        <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b bg-gray-50">
+            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+              Deactivated Users ({deactivatedUsers.length})
+            </h3>
+          </div>
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b">
+              <tr>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">User</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Email</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Role</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Deleted</th>
+                <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {deactivatedUsers.map((user) => (
+                <tr key={user.id} className="hover:bg-gray-50 opacity-75">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-xs font-bold">
+                        {user.firstName[0]}{user.lastName[0]}
+                      </div>
+                      <span className="text-sm font-medium text-gray-700">{user.firstName} {user.lastName}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-500">{user.email}</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                      {user.role || 'No role'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-500">
+                    {user.deletedAt ? new Date(user.deletedAt).toLocaleDateString() : 'N/A'}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <form action={restoreUser}>
+                      <input type="hidden" name="id" value={user.id} />
+                      <SubmitButton
+                        label="Restore"
+                        pendingLabel="Restoring…"
+                        className="text-sm text-green-600 hover:text-green-800 font-medium"
+                      />
+                    </form>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

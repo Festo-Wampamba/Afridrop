@@ -17,7 +17,7 @@ export default async function ReceptionLayout({
   }
 
   const role = (session.user as { role?: string }).role;
-  if (role !== 'receptionist' && role !== 'super_admin') {
+  if (role !== 'receptionist' && role !== 'super_admin' && role !== 'director') {
     redirect(homeForRole(role));
   }
 
