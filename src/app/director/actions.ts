@@ -192,3 +192,31 @@ export async function getPendingApprovals() {
     totalAmount: r.totalAmount ? Number(r.totalAmount) : null,
   }));
 }
+
+// ── All Quotations (director full management) ──────────────────────────────
+export async function getAllQuotations() {
+  await requireRole(['director', 'super_admin']);
+
+  const rows = await db
+    .select({
+      id: quotations.id,
+      quotationNumber: quotations.quotationNumber,
+      customerName: quotations.customerName,
+      customerEmail: quotations.customerEmail,
+      projectDescription: quotations.projectDescription,
+      location: quotations.location,
+      totalAmount: quotations.totalAmount,
+      validUntil: quotations.validUntil,
+      notes: quotations.notes,
+      status: quotations.status,
+      createdAt: quotations.createdAt,
+    })
+    .from(quotations)
+    .where(isNull(quotations.deletedAt))
+    .orderBy(desc(quotations.createdAt));
+
+  return rows.map((r) => ({
+    ...r,
+    totalAmount: r.totalAmount ? Number(r.totalAmount) : null,
+  }));
+}

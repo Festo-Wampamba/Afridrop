@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getSalesOverview, getRecentQuotations } from './actions';
 import { RevenueChart } from '@/components/dashboard/RevenueChart';
 import { ComingSoon } from '@/components/dashboard/ComingSoon';
-import { TrendingUp, Users, CheckCircle, XCircle, Clock, Eye, RefreshCw } from 'lucide-react';
+import { TrendingUp, Users, CheckCircle, XCircle, Clock, Eye, RefreshCw, PauseCircle, Ban } from 'lucide-react';
 
 function StatCard({
   label,
@@ -45,11 +45,12 @@ function statusLabel(status: string | null): string {
     case 'approved': return 'Approved';
     case 'rejected': return 'Rejected';
     case 'converted': return 'Converted';
+    case 'on_hold': return 'On Hold';
+    case 'cancelled': return 'Cancelled';
     case 'assigned': return 'Assigned';
     case 'in_progress': return 'In Progress';
     case 'completed': return 'Completed';
     case 'verified': return 'Verified';
-    case 'cancelled': return 'Cancelled';
     default: return status ?? '—';
   }
 }
@@ -61,6 +62,8 @@ function statusBadgeClass(status: string | null): string {
     case 'approved': return 'bg-green-100 text-green-800';
     case 'rejected': return 'bg-red-100 text-red-800';
     case 'converted': return 'bg-[#009FCE]/15 text-[#00477A]';
+    case 'on_hold': return 'bg-amber-200 text-amber-900';
+    case 'cancelled': return 'bg-gray-100 text-gray-600';
     default: return 'bg-slate-100 text-slate-700';
   }
 }
@@ -84,12 +87,14 @@ export default async function SalesPage() {
       {/* Pipeline stage cards */}
       <section>
         <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">Pipeline Stages</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
           <StatCard label="Pending" value={pipeline.pending} icon={Clock} accent="bg-amber-500" />
           <StatCard label="Reviewed" value={pipeline.reviewed} icon={Eye} accent="bg-blue-500" />
           <StatCard label="Approved" value={pipeline.approved} icon={CheckCircle} accent="bg-green-600" />
           <StatCard label="Converted" value={pipeline.converted} icon={RefreshCw} accent="bg-[#009FCE]" />
           <StatCard label="Rejected" value={pipeline.rejected} icon={XCircle} accent="bg-red-500" />
+          <StatCard label="On Hold" value={pipeline.on_hold} icon={PauseCircle} accent="bg-amber-600" />
+          <StatCard label="Cancelled" value={pipeline.cancelled} icon={Ban} accent="bg-gray-500" />
         </div>
       </section>
 

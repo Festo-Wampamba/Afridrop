@@ -2,11 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users } from 'lucide-react';
+import { LayoutDashboard, Users, Briefcase } from 'lucide-react';
 
 const ITEMS = [
   { href: '/sales', label: 'Overview', icon: LayoutDashboard, exact: true },
   { href: '/sales/leads', label: 'Leads', icon: Users, exact: false },
+  { href: '/sales/jobs', label: 'Jobs', icon: Briefcase, exact: false },
 ];
 
 export function SalesNav() {
