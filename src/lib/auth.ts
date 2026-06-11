@@ -36,6 +36,10 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
+    // Sign-ups are staff-provisioning only (no public self-signup UI).
+    // autoSignIn would replace the provisioning manager's session with
+    // the newly created technician's session.
+    autoSignIn: false,
   },
   user: {
     additionalFields: {
