@@ -44,7 +44,8 @@ export async function provisionTechnician(formData: FormData) {
         lastName,
       },
     });
-  } catch {
+  } catch (e) {
+    console.error('provisionTechnician signUpEmail failed:', e);
     redirect('/manager/team?error=create_failed');
   }
 

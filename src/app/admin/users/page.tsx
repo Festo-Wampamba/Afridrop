@@ -43,7 +43,7 @@ async function createUser(formData: FormData) {
       },
       headers: await headers(),
     });
-  } catch {
+  } catch (e) {
     // Check whether the email belongs to an existing (possibly soft-deleted) user.
     const [existing] = await db
       .select({ deletedAt: users.deletedAt })
@@ -57,7 +57,11 @@ async function createUser(formData: FormData) {
     if (existing) {
       redirect('/admin/users?error=duplicate');
     }
-    throw new Error('Failed to create user');
+    // Surface the real reason instead of a generic 500 page; full error goes
+    // to the server logs.
+    console.error('admin createUser failed:', e);
+    const detail = e instanceof Error ? e.message.slice(0, 120) : 'Unknown error';
+    redirect(`/admin/users?action=create&error=create_failed&detail=${encodeURIComponent(detail)}`);
   }
 
   revalidatePath('/admin/users');
@@ -128,12 +132,13 @@ async function restoreUser(formData: FormData) {
 export default async function UsersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ action?: string; edit?: string; error?: string }>;
+  searchParams: Promise<{ action?: string; edit?: string; error?: string; detail?: string }>;
 }) {
   const params = await searchParams;
   const showCreate = params.action === 'create';
   const editId = params.edit;
   const errorParam = params.error;
+  const errorDetail = params.detail;
 
   const allUsers = await db.query.users.findMany({
     where: isNull(users.deletedAt),
@@ -152,6 +157,8 @@ export default async function UsersPage({
       ? 'This email belongs to a deactivated account. Restore it below instead.'
       : errorParam === 'duplicate'
       ? 'A user with this email already exists.'
+      : errorParam === 'create_failed'
+      ? `Could not create the user${errorDetail ? `: ${errorDetail}` : '.'}`
       : null;
 
   return (
