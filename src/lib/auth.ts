@@ -7,6 +7,16 @@ import { db } from "@/db";
 import { users, sessions, accounts, verifications } from "@/db/schema/auth";
 import { ac, roles } from "@/lib/permissions";
 import { eq } from "drizzle-orm";
+import { sendEmail } from "@/lib/email";
+
+// Escape user-controlled values before interpolating into email HTML.
+const escapeHtml = (s: string) =>
+  s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -40,6 +50,59 @@ export const auth = betterAuth({
     // autoSignIn would replace the provisioning manager's session with
     // the newly created technician's session.
     autoSignIn: false,
+    sendResetPassword: async ({ user, url }) => {
+      await sendEmail({
+        to: user.email,
+        subject: "Reset Your Password — Afridrop Solutions",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="text-align: center; padding: 20px 0; border-bottom: 2px solid #2563eb;">
+              <h1 style="color: #2563eb; margin: 0;">Afridrop Solutions</h1>
+            </div>
+            <div style="padding: 30px 0;">
+              <h2 style="color: #1f2937;">Reset Your Password</h2>
+              <p style="color: #4b5563; line-height: 1.6;">Hi ${escapeHtml(user.name)},</p>
+              <p style="color: #4b5563; line-height: 1.6;">We received a request to reset your password. Click the button below to create a new one.</p>
+              <div style="text-align: center; padding: 20px 0;">
+                <a href="${escapeHtml(url)}" style="background-color: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold;">Reset Password</a>
+              </div>
+              <p style="color: #9ca3af; font-size: 13px;">If you did not request this, you can safely ignore this email.</p>
+            </div>
+            <div style="border-top: 1px solid #e5e7eb; padding: 15px 0; text-align: center; color: #9ca3af; font-size: 12px;">
+              <p>Afridrop Solutions | afridropsolutions.com</p>
+            </div>
+          </div>
+        `,
+      });
+    },
+  },
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendEmail({
+        to: user.email,
+        subject: "Verify Your Email — Afridrop Solutions",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="text-align: center; padding: 20px 0; border-bottom: 2px solid #2563eb;">
+              <h1 style="color: #2563eb; margin: 0;">Afridrop Solutions</h1>
+            </div>
+            <div style="padding: 30px 0;">
+              <h2 style="color: #1f2937;">Verify Your Email</h2>
+              <p style="color: #4b5563; line-height: 1.6;">Hi ${escapeHtml(user.name)},</p>
+              <p style="color: #4b5563; line-height: 1.6;">Please verify your email address by clicking the button below.</p>
+              <div style="text-align: center; padding: 20px 0;">
+                <a href="${escapeHtml(url)}" style="background-color: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold;">Verify Email</a>
+              </div>
+              <p style="color: #9ca3af; font-size: 13px;">If you did not create an account, you can safely ignore this email.</p>
+            </div>
+            <div style="border-top: 1px solid #e5e7eb; padding: 15px 0; text-align: center; color: #9ca3af; font-size: 12px;">
+              <p>Afridrop Solutions | afridropsolutions.com</p>
+            </div>
+          </div>
+        `,
+      });
+    },
+    sendOnSignUp: true,
   },
   user: {
     additionalFields: {
